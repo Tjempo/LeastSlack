@@ -1,3 +1,5 @@
 
 Debug/SlackOpdracht.exe
 Debug/src/main.o
+*.o
+*.o

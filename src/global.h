@@ -6,16 +6,16 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 
-//Defines: {Beter geen globale vars gebruiken}
+//Defines:
+
+// {Beter geen globale vars gebruiken}
 
 
 //TypeDefs:
 
-
-//Function defs in main:
-void readFile(std::string);
 
 
 

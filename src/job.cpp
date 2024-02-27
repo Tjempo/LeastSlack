@@ -8,11 +8,11 @@
 #include "job.h"
 
 job::job(): jobID(jobCount) {
-	jobCount++;
+	this->jobCount++;
 }
 
 job::job(const job &RHS): jobID(jobCount) {
-	jobCount++;
+	this->jobCount++;
 }
 
 job::~job() {
@@ -29,6 +29,7 @@ job& job::operator=(const job &RHS) {
 	return *this;
 }
 
+/*
 bool job::operator==(const job& RHS) const {
 	if () {
 		return true;
@@ -43,7 +44,7 @@ bool job::operator<(const job & RHS) const {
 	}
 	return false;
 }
-
+*/
 
 
 

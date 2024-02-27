@@ -30,7 +30,7 @@ public:
 	task getTask(unsigned short index);
 
 private:
-	static unsigned short jobCount;
+	unsigned short jobCount;
 	unsigned short jobID;
 	std::vector<task> taskList;
 
