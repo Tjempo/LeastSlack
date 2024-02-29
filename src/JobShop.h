@@ -30,6 +30,8 @@ private:
 	void readFirstLine(const std::string &fileName);
     void readTasks(const std::string &fileName);
 
+    void schedule();
+
     unsigned short nAmountOfTasks;
 	unsigned short nAmountOfMachines;
 };

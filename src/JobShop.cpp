@@ -1,9 +1,6 @@
 #include "JobShop.h"
 
-#include <regex>
-
-JobShop::JobShop() :
-		nAmountOfTasks(0), nAmountOfMachines(0) {
+JobShop::JobShop() : nAmountOfTasks(0), nAmountOfMachines(0) {
 	//Empty :O
 }
 
@@ -61,21 +58,13 @@ void JobShop::readTasks(const std::string &fileName) {
 
     std::string line;
 
-    //ToDo: #Vraag of je rekening moet houden dat er text in kan staan?
-
     // Skip the first line
     if (!std::getline(inputFile, line)) {
         throw std::runtime_error("Error reading the first line from the file: " + fileName);
     }
-    std::regex containsLetters("[a-zA-Z]");
     // Read and store the remaining lines
     while (std::getline(inputFile, line)) {
-    	if(!std::regex_match(line, containsLetters)){
-        	jobs.push_back(line);
-        	//ToDo: #Turn it into a Job using the Job Class
-    	}else{
-    		std::cout << "Line failed check: " << line << std::endl;
-    	}
+    	jobs.push_back(line);
     }
 
     // Close the file
@@ -85,6 +74,22 @@ void JobShop::readTasks(const std::string &fileName) {
     for (size_t i = 0; i < jobs.size(); ++i) {
         std::cout << "Job[" << i << "] = " << jobs[i] << std::endl;
     }
+}
+
+void JobShop::schedule(){
+	unsigned long int time = 0; //Moet misschien in class
+	
+	/*ToDo:
+	- Bereken langste taak
+	- Bereken EST (Earliest Start Time)
+	- Bereken Slack
+	- Start taak met laagste slack
+	- Zet taak naar {in progress}
+	- 
+	*/
+
+
+
 }
 
 
