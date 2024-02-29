@@ -24,7 +24,7 @@ public:
 	virtual ~JobShop(); //Destructor
 
 protected:
-	std::vector<std::string> jobs; //is nu nog een string moet Job worden
+	
 
 private:
 	void readFirstLine(const std::string &fileName);
@@ -32,6 +32,7 @@ private:
 
     void schedule();
 
+    std::vector<job> jobs;
     unsigned short nAmountOfTasks;
 	unsigned short nAmountOfMachines;
 };

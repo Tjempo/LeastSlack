@@ -7,8 +7,19 @@
 
 #include "job.h"
 
-job::job(unsigned short ID) :
-		jobID(ID) {
+job::job(unsigned short ID, std::string jobString) : jobID(ID) {
+	// Define & initialize variables
+	std::istringstream iss(jobString);
+    unsigned short machineID = 0; 
+	unsigned short duration = 0;	
+	unsigned short taskID = 0;
+
+    // Loop to read pairs of machineID and duration from jobString
+    while (iss >> machineID >> duration) {
+        taskList.push_back(task(taskID++, machineID, duration));
+		std::cout << "TaskID: " << taskID << std::endl;
+		std::cout << "MachineID: " << machineID << " Duration: " << duration << std::endl;
+	}
 }
 
 job::job(const job &RHS) :
@@ -32,10 +43,6 @@ job& job::operator=(const job &RHS) {
 }
 
 // functions
-
-void job::addTask(task t) {
-	this->taskList.push_back(t);
-}
 
 task job::getTask(unsigned short index) {
 	return this->taskList.at(index);

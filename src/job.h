@@ -10,23 +10,27 @@
 
 #include <iostream>
 #include <vector>
+#include "global.h"
 #include "error.h"
-//#include "task.h"
+#include "task.h"
+
+/* Fucker...
 #define task int // placeholder for real task class
+*/
 
 class job {
 public:
 	// standard class functions
 	//job();
-	job(unsigned short ID);
+	job(unsigned short ID, std::string jobString);
 	virtual ~job();
 	job(const job &RHS);
 	job& operator=(const job &RHS);
 
 	// added getters, setters and other functions :)
-	// --taskList_get_set
-	void addTask(task t);
+	
 	task getTask(unsigned short index);
+
 	// --jobID_get
 	unsigned short getJobID();
 

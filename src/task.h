@@ -9,6 +9,7 @@
 #define TASK_H_
 
 #include "state.h"
+#include "global.h"
 #include <iostream>
 
 class task {

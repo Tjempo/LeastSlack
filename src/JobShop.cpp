@@ -22,6 +22,7 @@ void JobShop::readFile(const std::string &fileName) {
 	readTasks(fileName);
 }
 
+
 void JobShop::readFirstLine(const std::string &fileName) {
 	// Open file with exception handling:
 	std::cout << "FileName: " << fileName << std::endl;
@@ -62,22 +63,21 @@ void JobShop::readTasks(const std::string &fileName) {
     if (!std::getline(inputFile, line)) {
         throw std::runtime_error("Error reading the first line from the file: " + fileName);
     }
+
+	unsigned short jobID = 0;
     // Read and store the remaining lines
     while (std::getline(inputFile, line)) {
-    	jobs.push_back(line);
+    	// jobs.push_back(line);
+		jobs.push_back(job(jobID, line));
+		jobID++;
     }
 
     // Close the file
     inputFile.close();
-
-    //Print for debug purpose:
-    for (size_t i = 0; i < jobs.size(); ++i) {
-        std::cout << "Job[" << i << "] = " << jobs[i] << std::endl;
-    }
 }
 
 void JobShop::schedule(){
-	unsigned long int time = 0; //Moet misschien in class
+	// unsigned long int time = 0;
 	
 	/*ToDo:
 	- Bereken langste taak

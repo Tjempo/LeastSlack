@@ -12,7 +12,7 @@ enum state {
 	NOT_COMPLETED,
 	IN_PROGRESS,
 	COMPLETED,
-	LIMBO, // for if a tast was initialized without propper parameters
+	LIMBO, // for if a task was initialized without proper parameters
 };
 
 

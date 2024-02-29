@@ -14,10 +14,8 @@ task::task() :
 
 }
 
-task::task(unsigned short ID, unsigned short machineNumber,
-		unsigned short duration) :
-		taskID(ID), machineNumber(machineNumber), duration(duration), currentState(
-				LIMBO), earliestStartTime(0), startTime(0), endTime(0) {
+task::task(unsigned short ID, unsigned short machineNumber, unsigned short duration) : taskID(ID), machineNumber(machineNumber), duration(duration), currentState(NOT_COMPLETED), earliestStartTime(0), startTime(0), endTime(0) {
+	std::cout << "Task created: " << ID << ", " << machineNumber << ", " << duration << std::endl;
 
 }
 
