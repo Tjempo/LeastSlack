@@ -17,20 +17,22 @@
 class job {
 public:
 	// standard class functions
-	job();
+	//job();
+	job(unsigned short ID);
 	virtual ~job();
 	job(const job &RHS);
 	job& operator=(const job &RHS);
-	bool operator==(const job& RHS) const;
-	bool operator<(const job & RHS) const;
 
 	// added getters, setters and other functions :)
-	// --taskList
+	// --taskList_get_set
 	void addTask(task t);
 	task getTask(unsigned short index);
+	// --jobID_get
+	unsigned short getJobID();
+
+
 
 private:
-	unsigned short jobCount;
 	unsigned short jobID;
 	std::vector<task> taskList;
 

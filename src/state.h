@@ -11,7 +11,8 @@
 enum state {
 	NOT_COMPLETED,
 	IN_PROGRESS,
-	COMPLETED
+	COMPLETED,
+	LIMBO, // for if a tast was initialized without propper parameters
 };
 
 

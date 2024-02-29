@@ -3,3 +3,7 @@ Debug/SlackOpdracht.exe
 Debug/src/main.o
 *.o
 *.o
+.cproject
+.settings/language.settings.xml
+Debug/SlackOpdracht.exe
+Debug/src/main.o

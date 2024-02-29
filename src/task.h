@@ -9,26 +9,31 @@
 #define TASK_H_
 
 #include "state.h"
+#include <iostream>
 
 class task {
 public:
 	// constructors + destructor
 	task();
-	task(unsigned short machineNumber, unsigned short duration);
+	task(unsigned short ID, unsigned short machineNumber, unsigned short duration);
 	task(const task& RHS);
 	virtual ~task();
 	// operators
 	task& operator=(const task& RHS);
+
 	// functions
-	// --machineNumber_get_set
-	void setMachineNumber(unsigned short machineNumber);
+	// --taskID_get
+	unsigned short getTaskID();
+	// --machineNumber_get
 	unsigned short getMachineNumber();
-	// --duration_get_set
-	void setDuration(unsigned short duration);
+	// --duration_get
 	unsigned short getDuration();
-	// --finished_get_set
-	void setFinished(state state);
+	// --state_get_set
+	void setState(state state);
 	state getCurrentState();
+	// -- earliestStartTime_get_set
+	void setEarliestStartTime(unsigned long time);
+	unsigned long getEarliestStartTime();
 	// --startTime_get_set
 	void setStartTime(unsigned long time);
 	unsigned long getStartTime();
@@ -42,6 +47,7 @@ private:
 	unsigned short machineNumber;
 	unsigned short duration;
 	state currentState;
+	unsigned long earliestStartTime;
 	unsigned long startTime;
 	unsigned long endTime;
 };

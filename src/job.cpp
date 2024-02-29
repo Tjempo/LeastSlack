@@ -7,12 +7,12 @@
 
 #include "job.h"
 
-job::job(): jobID(jobCount) {
-	this->jobCount++;
+job::job(unsigned short ID) :
+		jobID(ID) {
 }
 
-job::job(const job &RHS): jobID(jobCount) {
-	this->jobCount++;
+job::job(const job &RHS) :
+		jobID(RHS.jobID), taskList(RHS.taskList) {
 }
 
 job::~job() {
@@ -26,29 +26,10 @@ job& job::operator=(const job &RHS) {
 		std::cout << "this the same" << std::endl;
 		return *this;
 	}
+	this->jobID = RHS.jobID;
+	this->taskList = RHS.taskList;
 	return *this;
 }
-
-/*
-bool job::operator==(const job& RHS) const {
-	if () {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool job::operator<(const job & RHS) const {
-	if () {
-		return true;
-	}
-	return false;
-}
-*/
-
-
-
-
 
 // functions
 
@@ -58,5 +39,10 @@ void job::addTask(task t) {
 
 task job::getTask(unsigned short index) {
 	return this->taskList.at(index);
+}
+
+// --jobID_get
+unsigned short job::getJobID() {
+	return this->jobID;
 }
 
