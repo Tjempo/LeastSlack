@@ -15,7 +15,7 @@
 class task {
 public:
 	// constructors + destructor
-	task();
+	task() = delete;
 	task(unsigned short ID, unsigned short machineNumber, unsigned short duration);
 	task(const task& RHS);
 	virtual ~task();

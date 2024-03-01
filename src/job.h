@@ -21,7 +21,7 @@
 class job {
 public:
 	// standard class functions
-	//job();
+	job() = delete;
 	job(unsigned short ID, std::string jobString);
 	virtual ~job();
 	job(const job &RHS);
