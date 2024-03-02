@@ -75,6 +75,7 @@ void job::calculateEST(unsigned long long time) {
 unsigned long long job::calculateEST(const task &t) {
     if (t.getTaskID() == 0) {
         // For the first task in the job, it can start immediately
+		// Feels like a hack, might be bad... We'll see.
         return 0;
     }
 

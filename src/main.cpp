@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
 	} catch (const std::exception &e) {
 		std::cerr << "Error: " << "Program failed with exception: " << std::endl << e.what() << std::endl;
 		return 1;
+		//ToDo: check for args to fix "construction from null is not valid"
 	}
 }
 
