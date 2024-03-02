@@ -73,25 +73,21 @@ void job::calculateEST(unsigned long long time) {
 
 
 unsigned long long job::calculateEST(const task &t) {
-    if (t.getTaskID() == 0) {
-        // For the first task in the job, it can start immediately
-		// Feels like a hack, might be bad... We'll see.
+    auto getPreviousTask = [&t](const task &ts) {
+        return ts.getTaskID() == (t.getTaskID() - 1);
+    };
+
+    // Find the previous task
+    auto previousTaskID = std::find_if(taskList.begin(), taskList.end(), getPreviousTask);
+    // If the previous task is not found, it means the current task is the first task
+
+    if (previousTaskID == taskList.end()) {
+        // If it is, it can start immediately
         return 0;
     }
-
-    // Find predecessor task
-    auto it = std::find_if(taskList.begin(), taskList.end(),
-            [&t](const task &a) { return a.getTaskID() == (t.getTaskID() - 1); });
-
-    // Validate if predecessor is found
-    if (it == taskList.end()) {
-        throw std::runtime_error("Predecessor task not found");
-    }
-
     // Calculate EST using predecessor's earliest start time and duration
-    return it->getEarliestStartTime() + it->getDuration();
+    return (previousTaskID->getEarliestStartTime() + previousTaskID->getDuration());
 }
-
 
 
 

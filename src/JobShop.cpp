@@ -81,17 +81,21 @@ void JobShop::schedule(){
 	
 	calculateSlack(time); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan?
 	/*ToDo:
-	- Bereken Slack < Bezig.../
+	- Bereken Slack < Klaar hoop ik
+	- Bereken total duration < Klaar 
+	- Bereken EST (Earliest Start Time)
 
 	- Sorteer task op basis van slack
 	- Start taak met laagste slack
-	- Bereken EST (Earliest Start Time)??? //Is dit nog nodig?
+	- 
 	- Zet taak naar {in progress}
 	*/
 
+	/*
 	while(true){ //Dit moet iets worden van while !allJobsDone() ofzo
 		
 	}
+	*/
 }
 
 void JobShop::calculateSlack(unsigned long long &time){
@@ -103,7 +107,6 @@ void JobShop::calculateSlack(unsigned long long &time){
 
 
 //Getters:
-
 unsigned short JobShop::getAmountOfTasks() const{
 	return this->nAmountOfTasks;
 }
