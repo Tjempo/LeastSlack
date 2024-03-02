@@ -50,13 +50,19 @@ task& task::operator=(const task &RHS) {
 }
 
 // functions
+
+//--taskID_get
+unsigned short task::getTaskID() const{
+	return this->taskID;
+}
+
 // --machineNumber_get
 unsigned short task::getMachineNumber() {
 	return this->machineNumber;
 }
 
 // --duration_get
-unsigned short task::getDuration() {
+unsigned short task::getDuration() const {
 	return this->duration;
 }
 
@@ -65,7 +71,7 @@ void task::setState(state state) {
 	this->currentState = state;
 }
 
-state task::getCurrentState() {
+state task::getCurrentState() const {
 	return this->currentState;
 }
 

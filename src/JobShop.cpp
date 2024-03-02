@@ -77,19 +77,42 @@ void JobShop::readTasks(const std::string &fileName) {
 }
 
 void JobShop::schedule(){
-	// unsigned long int time = 0;
+	unsigned long long time = 0;
 	
+	calculateSlack(time); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan?
 	/*ToDo:
-	- Bereken langste taak
-	- Bereken EST (Earliest Start Time)
-	- Bereken Slack
+	- Bereken Slack < Bezig.../
+
+	- Sorteer task op basis van slack
 	- Start taak met laagste slack
+	- Bereken EST (Earliest Start Time)??? //Is dit nog nodig?
 	- Zet taak naar {in progress}
-	- 
 	*/
 
+	while(true){ //Dit moet iets worden van while !allJobsDone() ofzo
+		
+	}
+}
+
+void JobShop::calculateSlack(unsigned long long &time){
+	for(job &job : jobs){
+		job.calculateEST(time);
+		job.calculateTotalDuration();
+	}
+}
 
 
+//Getters:
+
+unsigned short JobShop::getAmountOfTasks() const{
+	return this->nAmountOfTasks;
+}
+unsigned short JobShop::getAmountOfMachines() const{
+	return this->nAmountOfMachines;
+}
+
+const std::vector<job> JobShop::getJobs() const{
+	return this->jobs;
 }
 
 

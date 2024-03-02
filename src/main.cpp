@@ -6,10 +6,11 @@ int main(int argc, char **argv) {
 	try {
 		std::string path = argv[1];
 		//Make new JobShop using argv[1]:
-		JobShop Job = JobShop(path);
+		JobShop js = JobShop(path);
+		js.schedule();
 		return 0;
 	} catch (const std::exception &e) {
-		std::cerr << "Error: " << "Program expects at least one argument," << std::endl << e.what() << std::endl;
+		std::cerr << "Error: " << "Program failed with exception: " << std::endl << e.what() << std::endl;
 		return 1;
 	}
 }

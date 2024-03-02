@@ -27,17 +27,27 @@ public:
 	job(const job &RHS);
 	job& operator=(const job &RHS);
 
-	// added getters, setters and other functions :)
-	
-	task getTask(unsigned short index);
+    void calculateEST(unsigned long long currentTime);
+	unsigned long long calculateEST(const task &t);
 
-	// --jobID_get
+    bool compareTasksByID(const task &task1, const task &task2);
+
+    void calculateTotalDuration();
+
+    // added getters, setters and other functions :)
+
+    bool getJobsAvailable();
+
+    task getTask(unsigned short index);
+
+    // --jobID_get
 	unsigned short getJobID();
 
 
 
 private:
 	unsigned short jobID;
+	unsigned long long totalJobDuration;
 	std::vector<task> taskList;
 
 

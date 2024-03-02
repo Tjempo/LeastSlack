@@ -23,6 +23,11 @@ public:
 
 	virtual ~JobShop(); //Destructor
 
+    const std::vector<job> getJobs() const; //Mocht dit nodig zijn:
+    unsigned short getAmountOfTasks() const;
+    unsigned short getAmountOfMachines() const;
+    void schedule();
+
 protected:
 	
 
@@ -30,7 +35,7 @@ private:
 	void readFirstLine(const std::string &fileName);
     void readTasks(const std::string &fileName);
 
-    void schedule();
+    void calculateSlack(unsigned long long &time);
 
     std::vector<job> jobs;
     unsigned short nAmountOfTasks;

@@ -24,15 +24,16 @@ public:
 
 	// functions
 	// --taskID_get
-	unsigned short getTaskID();
+	unsigned short getTaskID() const;
 	// --machineNumber_get
 	unsigned short getMachineNumber();
 	// --duration_get
-	unsigned short getDuration();
+	unsigned short getDuration() const;
 	// --state_get_set
 	void setState(state state);
-	state getCurrentState();
-	// -- earliestStartTime_get_set
+    state getCurrentState() const;
+    // state getCurrentState(); // DEPRECATED
+    // -- earliestStartTime_get_set
 	void setEarliestStartTime(unsigned long time);
 	unsigned long getEarliestStartTime();
 	// --startTime_get_set
