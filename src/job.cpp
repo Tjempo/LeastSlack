@@ -146,3 +146,8 @@ unsigned short job::getJobID() {
 	return this->jobID;
 }
 
+// -- totalJobDuration_get
+const unsigned long long job::getTotalJobDuration() const{
+	return this->totalJobDuration;
+}
+

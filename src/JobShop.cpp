@@ -1,6 +1,8 @@
 #include "JobShop.h"
+#include <algorithm>
 
-JobShop::JobShop() : nAmountOfTasks(0), nAmountOfMachines(0) {
+JobShop::JobShop() :
+		nAmountOfTasks(0), nAmountOfMachines(0) {
 	//Empty :O
 }
 
@@ -21,7 +23,6 @@ void JobShop::readFile(const std::string &fileName) {
 	readFirstLine(fileName);
 	readTasks(fileName);
 }
-
 
 void JobShop::readFirstLine(const std::string &fileName) {
 	// Open file with exception handling:
@@ -51,57 +52,62 @@ void JobShop::readFirstLine(const std::string &fileName) {
 }
 
 void JobShop::readTasks(const std::string &fileName) {
-    std::ifstream inputFile(fileName);
+	std::ifstream inputFile(fileName);
 
-    if (!inputFile) {
-        throw std::runtime_error("Error opening file: " + fileName + "\n" + "Check if it exists");
-    }
-
-    std::string line;
-
-    // Skip the first line
-    if (!std::getline(inputFile, line)) {
-        throw std::runtime_error("Error reading the first line from the file: " + fileName);
-    }
-
-	unsigned short jobID = 0;
-    // Read and store the remaining lines
-    while (std::getline(inputFile, line)) {
-    	// jobs.push_back(line);
-		jobs.push_back(job(jobID, line));
-		jobID++;
-    }
-
-    // Close the file
-    inputFile.close();
-}
-
-void JobShop::schedule(){
-	unsigned long long time = 0;
-	
-	calculateSlack(time); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
-	/*ToDo:
-	- Bereken Slack < Klaar hoop ik
-	- Bereken total duration < Klaar 
-	- Bereken EST (Earliest Start Time)
-
-	- Sorteer task op basis van slack
-	- Start taak met laagste slack
-	- 
-	- Zet taak naar {in progress}
-	*/
-
-
-	while(!allJobsDone()){ //Dit moet iets worden van while !allJobsDone() ofzo
-		
+	if (!inputFile) {
+		throw std::runtime_error(
+				"Error opening file: " + fileName + "\n"
+						+ "Check if it exists");
 	}
 
+	std::string line;
+
+	// Skip the first line
+	if (!std::getline(inputFile, line)) {
+		throw std::runtime_error(
+				"Error reading the first line from the file: " + fileName);
+	}
+
+	unsigned short jobID = 0;
+	// Read and store the remaining lines
+	while (std::getline(inputFile, line)) {
+		// jobs.push_back(line);
+		jobs.push_back(job(jobID, line));
+		jobID++;
+	}
+
+	// Close the file
+	inputFile.close();
+}
+
+void JobShop::schedule() {
+	unsigned long long time = 0;
+
+	calculateSlack(time); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
+	/*ToDo:
+	 - Bereken Slack < Klaar hoop ik
+	 - Bereken total duration < Klaar
+	 - Bereken EST (Earliest Start Time)
+
+	 - Sorteer task op basis van slack
+	 - Start taak met laagste slack
+	 -
+	 - Zet taak naar {in progress}
+	 */
+
+	sortTasks();
+
+	/* temporarily deactivated for obvious reasons :)
+	while (!allJobsDone()) {
+
+	}
+*/
 	std::cout << "all Jobs Completed" << std::endl;
 
 }
 
-void JobShop::calculateSlack(unsigned long long &time){
-	for(job &job : jobs){
+void JobShop::calculateSlack(unsigned long long &time) {
+	for (job &job : jobs) {
 		job.calculateEST(time);
 		job.calculateTotalDuration();
 	}
@@ -116,17 +122,45 @@ bool JobShop::allJobsDone() {
 	return true;
 }
 
+void JobShop::orderJobsByTotalDuration(std::vector<job>& jobs) {
+    // Use std::sort with a lambda function for comparison
+    std::sort(jobs.begin(), jobs.end(), [](const job& job1, const job& job2) {
+        return job1.getTotalJobDuration() > job2.getTotalJobDuration();
+    });
+}
+
+std::vector<task> JobShop::sortTasks() { // i have no idea if this is going to function the way i want it to :)
+
+	for (job &job : jobs) {
+			std::cout << "| JobID: | " << job.getJobID() << " | totalDuration|" << job.getTotalJobDuration() << " |" << std::endl;
+		}
+
+	orderJobsByTotalDuration(jobs);
+
+
+	std::vector<task> sortedList;
+
+	for (job &job : jobs) {
+		 std::cout << "| JobID: | " << job.getJobID() << " | totalDuration: | " << job.getTotalJobDuration() << " |" << std::endl;
+		/*//------------- if neccecairy, create a function for the is the job class
+		 for (task &task : job.taskList) {
+		 sortedList.push_back(task);
+		 }
+		 */
+	}
+
+	return sortedList;
+}
 
 //Getters:
-unsigned short JobShop::getAmountOfTasks() const{
+unsigned short JobShop::getAmountOfTasks() const {
 	return this->nAmountOfTasks;
 }
-unsigned short JobShop::getAmountOfMachines() const{
+unsigned short JobShop::getAmountOfMachines() const {
 	return this->nAmountOfMachines;
 }
 
-const std::vector<job> JobShop::getJobs() const{
+const std::vector<job> JobShop::getJobs() const {
 	return this->jobs;
 }
-
 

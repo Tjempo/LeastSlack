@@ -45,6 +45,10 @@ public:
     // --jobID_get
 	unsigned short getJobID();
 
+	// --totalJobDuration_get
+
+	const unsigned long long getTotalJobDuration() const;
+
 
 
 private:

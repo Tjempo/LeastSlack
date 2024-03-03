@@ -40,6 +40,9 @@ private:
 
     bool allJobsDone();
 
+    void orderJobsByTotalDuration(std::vector<job>& jobs);
+    std::vector<task> sortTasks();
+
     std::vector<job> jobs;
     unsigned short nAmountOfTasks;
 	unsigned short nAmountOfMachines;
