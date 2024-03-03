@@ -34,6 +34,8 @@ public:
 
     void calculateTotalDuration();
 
+    bool isJobDone();
+
     // added getters, setters and other functions :)
 
     bool getJobsAvailable();

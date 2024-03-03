@@ -35,7 +35,10 @@ private:
 	void readFirstLine(const std::string &fileName);
     void readTasks(const std::string &fileName);
 
+    void calculateLeastSlack(unsigned long long &time);
     void calculateSlack(unsigned long long &time);
+
+    bool allJobsDone();
 
     std::vector<job> jobs;
     unsigned short nAmountOfTasks;

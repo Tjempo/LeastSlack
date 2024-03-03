@@ -114,6 +114,16 @@ void job::calculateTotalDuration() {
 }
 
 
+bool job::isJobDone() {
+	for (const task& currentTask : taskList) {
+		if (currentTask.getCurrentState() != COMPLETED) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
 // Getters 
 
 

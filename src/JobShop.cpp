@@ -79,7 +79,7 @@ void JobShop::readTasks(const std::string &fileName) {
 void JobShop::schedule(){
 	unsigned long long time = 0;
 	
-	calculateSlack(time); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan?
+	calculateSlack(time); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
 	/*ToDo:
 	- Bereken Slack < Klaar hoop ik
 	- Bereken total duration < Klaar 
@@ -91,11 +91,13 @@ void JobShop::schedule(){
 	- Zet taak naar {in progress}
 	*/
 
-	/*
-	while(true){ //Dit moet iets worden van while !allJobsDone() ofzo
+
+	while(!allJobsDone()){ //Dit moet iets worden van while !allJobsDone() ofzo
 		
 	}
-	*/
+
+	std::cout << "all Jobs Completed" << std::endl;
+
 }
 
 void JobShop::calculateSlack(unsigned long long &time){
@@ -103,6 +105,15 @@ void JobShop::calculateSlack(unsigned long long &time){
 		job.calculateEST(time);
 		job.calculateTotalDuration();
 	}
+}
+
+bool JobShop::allJobsDone() {
+	for (job &job : jobs) {
+		if (!job.isJobDone()) {
+			return false; // when a job is not completed, return false right away
+		}
+	}
+	return true;
 }
 
 
