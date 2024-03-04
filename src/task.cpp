@@ -9,15 +9,19 @@
 
 // constructors + destructor
 /*
-task::task() :
-		taskID(0), machineNumber(0), duration(0), currentState(LIMBO), earliestStartTime(
-				0), startTime(0), endTime(0) {
+ task::task() :
+ taskID(0), machineNumber(0), duration(0), currentState(LIMBO), earliestStartTime(
+ 0), startTime(0), endTime(0) {
 
-}
-*/
+ }
+ */
 
-task::task(unsigned short ID, unsigned short machineNumber, unsigned short duration) : taskID(ID), machineNumber(machineNumber), duration(duration), currentState(NOT_COMPLETED), earliestStartTime(0), startTime(0), endTime(0) {
-	std::cout << "Task created: " << ID << ", " << machineNumber << ", " << duration << std::endl;
+task::task(unsigned short ID, unsigned short machineNumber,
+		unsigned short duration) :
+		taskID(ID), machineNumber(machineNumber), duration(duration), currentState(
+				NOT_COMPLETED), earliestStartTime(0), startTime(0), endTime(0) {
+	std::cout << "Task created: " << ID << ", " << machineNumber << ", "
+			<< duration << std::endl;
 
 }
 
@@ -34,10 +38,10 @@ task::~task() {
 }
 // operators
 task& task::operator=(const task &RHS) {
-	if(this == &RHS) {
-			std::cout << "this the same" << std::endl;
-			return *this;
-		}
+	if (this == &RHS) {
+		std::cout << "this the same" << std::endl;
+		return *this;
+	}
 	this->taskID = RHS.taskID;
 	this->machineNumber = RHS.machineNumber;
 	this->duration = RHS.duration;
@@ -51,13 +55,18 @@ task& task::operator=(const task &RHS) {
 
 // functions
 
+void task::activateTask(unsigned long long time) {
+	this->setState(IN_PROGRESS);
+	this->setStartTime(time);
+}
+
 //--taskID_get
-unsigned short task::getTaskID() const{
+unsigned short task::getTaskID() const {
 	return this->taskID;
 }
 
 // --machineNumber_get
-unsigned short task::getMachineNumber() {
+unsigned short task::getMachineNumber() const {
 	return this->machineNumber;
 }
 
@@ -79,7 +88,7 @@ state task::getCurrentState() const {
 void task::setEarliestStartTime(unsigned long time) {
 	this->earliestStartTime = time;
 }
-unsigned long task::getEarliestStartTime() {
+unsigned long task::getEarliestStartTime() const {
 	return this->earliestStartTime;
 }
 
@@ -88,7 +97,7 @@ void task::setStartTime(unsigned long time) {
 	this->startTime = time;
 }
 
-unsigned long task::getStartTime() {
+unsigned long task::getStartTime() const {
 	return this->startTime;
 }
 
@@ -97,7 +106,28 @@ void task::setEndTime(unsigned long time) {
 	this->endTime = time;
 }
 
-unsigned long task::getEndTime() {
+unsigned long task::getEndTime() const {
 	return this->endTime;
+}
+
+std::ostream& operator<<(std::ostream &os, const task &RHS) {
+	os << "task: " << std::endl;
+	os << "| task ID: " << RHS.getTaskID();
+	os << " | machineNumber: " << RHS.getMachineNumber();
+	os << " | duration: " <<RHS.getDuration();
+	os << " | currentState: ";
+	if (RHS.getCurrentState() == COMPLETED) {
+		os << " COMPLETED";
+	} else if (RHS.getCurrentState() == NOT_COMPLETED) {
+		os << " NOT_COMPLETED";
+	} else if (RHS.getCurrentState() == IN_PROGRESS) {
+		os << " IN_PROGRESS";
+	}
+	os << " | EST: " << RHS.getEarliestStartTime();
+	os << " | ST: " << RHS.getStartTime();
+	os << " | ET: " << RHS.getEndTime();
+	os << " |";
+	os << std::endl;
+	return os;
 }
 

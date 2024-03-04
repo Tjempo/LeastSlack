@@ -26,6 +26,8 @@ public:
 	virtual ~job();
 	job(const job &RHS);
 	job& operator=(const job &RHS);
+	bool operator<(const job &RHS) const;
+	bool operator>(const job &RHS) const;
 
     void calculateEST(unsigned long long currentTime);
 	unsigned long long calculateEST(const task &t);
@@ -41,9 +43,10 @@ public:
     bool getJobsAvailable();
 
     task getTask(unsigned short index);
+    task getNextTask();
 
     // --jobID_get
-	unsigned short getJobID();
+	const unsigned short getJobID() const;
 
 	// --totalJobDuration_get
 
@@ -58,5 +61,7 @@ private:
 
 
 };
+
+std::ostream& operator<<(std::ostream& os, const job& RHS);
 
 #endif /* JOB_H_ */

@@ -24,7 +24,10 @@ job::job(unsigned short ID, std::string jobString) : jobID(ID), totalJobDuration
 }
 
 job::job(const job &RHS) :
-		jobID(RHS.jobID), taskList(RHS.taskList) {
+		jobID(RHS.jobID)/*, taskList(RHS.taskList)*/, totalJobDuration(RHS.totalJobDuration) {
+	for (task task : RHS.taskList) {
+		this->taskList.push_back(task);
+	}
 }
 
 job::~job() {
@@ -34,13 +37,33 @@ job::~job() {
 // opperators
 
 job& job::operator=(const job &RHS) {
+	std::cout << "-------job::operator=------" << std::endl;
+	std::cout << RHS << std::endl;
 	if (this == &RHS) {
 		std::cout << "this the same" << std::endl;
 		return *this;
-	}
-	this->jobID = RHS.jobID;
+	} else {
+	this->jobID = RHS.getJobID();
+	this->totalJobDuration = RHS.getTotalJobDuration();
 	this->taskList = RHS.taskList;
 	return *this;
+	}
+}
+
+bool job::operator<(const job &RHS) const {
+	if(this->getTotalJobDuration() < RHS.getTotalJobDuration()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool job::operator>(const job &RHS) const {
+	if(this->getTotalJobDuration() > RHS.getTotalJobDuration()) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 // Functions
@@ -141,13 +164,37 @@ task job::getTask(unsigned short index) {
 	return this->taskList.at(index);
 }
 
+task job::getNextTask() {
+	for (task task : taskList) {
+		if(task.getCurrentState() != COMPLETED) {
+			return task;
+		}
+	}
+	return taskList.back();
+}
+
 // --jobID_get
-unsigned short job::getJobID() {
+const unsigned short job::getJobID() const {
 	return this->jobID;
 }
 
 // -- totalJobDuration_get
+
 const unsigned long long job::getTotalJobDuration() const{
 	return this->totalJobDuration;
 }
+
+
+std::ostream& operator<<(std::ostream& os, const job& RHS) {
+	os << "| Job ID: ";
+	os << RHS.getJobID();
+	os << " | Duration: ";
+	os << RHS.getTotalJobDuration();
+	os << " |";
+	os << std::endl;
+	return os;
+}
+
+
+
 

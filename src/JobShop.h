@@ -15,7 +15,7 @@
 
 class JobShop {
 public:
-	JobShop(); //Empty construcor
+	JobShop() = delete; //Empty construcor
     JobShop(const std::string &filePath);
     JobShop(const JobShop &other); //Copy constructor
 
@@ -40,10 +40,12 @@ private:
 
     bool allJobsDone();
 
-    void orderJobsByTotalDuration(std::vector<job>& jobs);
-    std::vector<task> sortTasks();
+    void orderJobsByTotalDuration(std::vector<job>& jobs) const;
+    void sortTasks();
 
+    std::vector<bool> machineState;
     std::vector<job> jobs;
+    unsigned long long time;
     unsigned short nAmountOfTasks;
 	unsigned short nAmountOfMachines;
 };

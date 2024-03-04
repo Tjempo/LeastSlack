@@ -1,11 +1,15 @@
 #include "JobShop.h"
 #include <algorithm>
 
+/*
 JobShop::JobShop() :
-		nAmountOfTasks(0), nAmountOfMachines(0) {
+		nAmountOfTasks(0), nAmountOfMachines(0), time(0) {
+	for (int i = 0; i < 0; ++i) {
+		this->machineState.push_back(false);
+	}
 	//Empty :O
 }
-
+*/
 JobShop::JobShop(const std::string &filePath) {
 	this->readFile(filePath);
 }
@@ -40,6 +44,10 @@ void JobShop::readFirstLine(const std::string &fileName) {
 	inputFile >> tasks >> machines;
 
 	//Store Values:
+	for (int i = 0; i < machines; ++i) {
+		this->machineState.push_back(false);
+	}
+
 	this->nAmountOfMachines = machines;
 	this->nAmountOfTasks = tasks;
 
@@ -98,10 +106,10 @@ void JobShop::schedule() {
 	sortTasks();
 
 	/* temporarily deactivated for obvious reasons :)
-	while (!allJobsDone()) {
+	 while (!allJobsDone()) {
 
-	}
-*/
+	 }
+	 */
 	std::cout << "all Jobs Completed" << std::endl;
 
 }
@@ -122,34 +130,44 @@ bool JobShop::allJobsDone() {
 	return true;
 }
 
-void JobShop::orderJobsByTotalDuration(std::vector<job>& jobs) {
-    // Use std::sort with a lambda function for comparison
-    std::sort(jobs.begin(), jobs.end(), [](const job& job1, const job& job2) {
-        return job1.getTotalJobDuration() > job2.getTotalJobDuration();
-    });
+void JobShop::orderJobsByTotalDuration(std::vector<job> &jobs) const {
+	std::sort(jobs.begin(), jobs.end(), [](const job &job1, const job &job2) {
+		return job1 > job2;
+	});
 }
 
-std::vector<task> JobShop::sortTasks() { // i have no idea if this is going to function the way i want it to :)
+void JobShop::sortTasks() { // i have no idea if this is going to function the way i want it to :)
 
+	std::cout
+			<< "----------------------------------------------------------------------------------------"
+			<< std::endl;
+	// debuf print statement
 	for (job &job : jobs) {
-			std::cout << "| JobID: | " << job.getJobID() << " | totalDuration|" << job.getTotalJobDuration() << " |" << std::endl;
-		}
+		std::cout << job << std::endl;
+	}
 
-	orderJobsByTotalDuration(jobs);
+	orderJobsByTotalDuration(jobs); // least slack but different
 
+	std::cout
+			<< "---sorted list ----------------------------------------------------------------------------------------"
+			<< std::endl;
 
 	std::vector<task> sortedList;
 
 	for (job &job : jobs) {
-		 std::cout << "| JobID: | " << job.getJobID() << " | totalDuration: | " << job.getTotalJobDuration() << " |" << std::endl;
-		/*//------------- if neccecairy, create a function for the is the job class
-		 for (task &task : job.taskList) {
-		 sortedList.push_back(task);
-		 }
-		 */
+		std::cout << job << std::endl;
+		if (job.getNextTask().getCurrentState() == NOT_COMPLETED
+				&& machineState[job.getNextTask().getMachineNumber()]
+						== false) {
+			machineState[job.getNextTask().getMachineNumber()] = true;
+			job.getNextTask().activateTask(time);
+			sortedList.push_back(job.getNextTask());
+		}
 	}
 
-	return sortedList;
+	for (task task : sortedList) {
+		std::cout << task << std::endl;
+	}
 }
 
 //Getters:

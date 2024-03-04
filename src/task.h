@@ -23,10 +23,13 @@ public:
 	task& operator=(const task& RHS);
 
 	// functions
+
+	void activateTask(unsigned long long time);
+
 	// --taskID_get
 	unsigned short getTaskID() const;
 	// --machineNumber_get
-	unsigned short getMachineNumber();
+	unsigned short getMachineNumber() const;
 	// --duration_get
 	unsigned short getDuration() const;
 	// --state_get_set
@@ -35,13 +38,13 @@ public:
     // state getCurrentState(); // DEPRECATED
     // -- earliestStartTime_get_set
 	void setEarliestStartTime(unsigned long time);
-	unsigned long getEarliestStartTime();
+	unsigned long getEarliestStartTime() const;
 	// --startTime_get_set
 	void setStartTime(unsigned long time);
-	unsigned long getStartTime();
+	unsigned long getStartTime() const;
 	// --endTime_get_set
 	void setEndTime(unsigned long time);
-	unsigned long getEndTime();
+	unsigned long getEndTime() const ;
 
 
 private:
@@ -53,5 +56,7 @@ private:
 	unsigned long startTime;
 	unsigned long endTime;
 };
+
+std::ostream& operator<<(std::ostream& os, const task& RHS);
 
 #endif /* TASK_H_ */
