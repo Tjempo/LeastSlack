@@ -43,7 +43,7 @@ private:
 
     void orderJobsByTotalDuration();
 
-    void checkTaskProgress();
+    void checkJobProgress();
 
     void taskActivationManager();
 

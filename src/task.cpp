@@ -22,7 +22,7 @@ task::task(unsigned short ID, unsigned short machineNumber,
 		taskID(ID), machineNumber(machineNumber), duration(duration), currentState(
 				NOT_COMPLETED), earliestStartTime(0), startTime(0), endTime(0) {
 	/*std::cout << "Task created: " << ID << ", " << machineNumber << ", "
-			<< duration << std::endl;*/
+	 << duration << std::endl;*/
 }
 
 task::task(const task &RHS) :
@@ -31,7 +31,7 @@ task::task(const task &RHS) :
 				RHS.earliestStartTime), startTime(RHS.startTime), endTime(
 				RHS.endTime) {
 	/*std::cout << "Task created: " << RHS.taskID << ", " << machineNumber << ", "
-				<< duration << std::endl;*/
+	 << duration << std::endl;*/
 }
 
 task::~task() {
@@ -57,9 +57,15 @@ task& task::operator=(const task &RHS) {
 // functions
 
 void task::activateTask(unsigned long long time) {
-	std::cout << "activate task" << std::endl;
+	std::cout << "activate task with id" << this->getTaskID() << std::endl;
 	this->setState(IN_PROGRESS);
 	this->setStartTime(time);
+}
+
+void task::finishTask(unsigned long long time) {
+	std::cout << "finish task" << this->getTaskID() << std::endl;
+	this->setState(COMPLETED);
+	this->setEndTime(time);
 }
 
 //--taskID_get
@@ -116,7 +122,7 @@ std::ostream& operator<<(std::ostream &os, const task &RHS) {
 	os << "task: " << std::endl;
 	os << "| task ID: " << RHS.getTaskID();
 	os << " | machineNumber: " << RHS.getMachineNumber();
-	os << " | duration: " <<RHS.getDuration();
+	os << " | duration: " << RHS.getDuration();
 	os << " | currentState: ";
 	if (RHS.getCurrentState() == COMPLETED) {
 		os << " COMPLETED";

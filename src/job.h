@@ -44,7 +44,9 @@ public:
     bool getJobsAvailable();
 
     task getTask(unsigned short index);
-    task& getNextTask() ;
+    task& getNextTask();
+
+    void checkTaskProgress(unsigned long long time);
 
     // --jobID_get
 	const unsigned short getJobID() const;

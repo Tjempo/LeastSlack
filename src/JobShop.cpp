@@ -89,7 +89,7 @@ void JobShop::readTasks(const std::string &fileName) {
 }
 
 void JobShop::schedule() {
-	calculateSlack(currentTime); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
+	//calculateSlack(currentTime); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
 
 	/*ToDo:
 	 - Bereken Slack < Klaar hoop ik
@@ -102,20 +102,23 @@ void JobShop::schedule() {
 	 - Zet taak naar {in progress}
 	 */
 
-	taskActivationManager();
+	//taskActivationManager();
 
+	//temporarily deactivated for obvious reasons :)
+	while (!allJobsDone()) {
+		calculateSlack(currentTime);
 
-	/*//temporarily deactivated for obvious reasons :)
-	 while (!allJobsDone()) {
-	 	 calculateSlack(currentTime);
+		checkJobProgress();
 
-	 	 checkTaskProgress();
+		taskActivationManager();
 
-	 	 sortTasks();
+		if (currentTime > 140) {
+			break;
+		}
 
-	 	++currentTime;
-	 }
-	 */
+		++currentTime;
+		std::cout << "Current time is: " << currentTime << std::endl;
+	}
 
 	// printJobResult(); // use \t for the tabs :)
 	std::cout << "all Jobs Completed" << std::endl;
@@ -131,7 +134,7 @@ void JobShop::calculateSlack(unsigned long long &time) {
 
 bool JobShop::allJobsDone() {
 	for (job &job : jobs) {
-		if (!job.isJobDone()) {
+		if (job.isJobDone() == false) {
 			return false; // when a job is not completed, return false right away
 		}
 	}
@@ -144,8 +147,11 @@ void JobShop::orderJobsByTotalDuration() {
 	});
 }
 
-void JobShop::checkTaskProgress() {
+void JobShop::checkJobProgress() {
 	// placeholder
+	for (job job : jobs) {
+		job.checkTaskProgress(currentTime);
+	}
 }
 
 void JobShop::taskActivationManager() { // i have no idea if this is going to function the way i want it to :)

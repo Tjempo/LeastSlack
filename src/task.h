@@ -27,6 +27,7 @@ public:
 	// functions
 
 	void activateTask(unsigned long long time);
+	void finishTask(unsigned long long time);
 
 	// --taskID_get
 	unsigned short getTaskID() const;
