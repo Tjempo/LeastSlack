@@ -2,14 +2,14 @@
 #include <algorithm>
 
 /*
-JobShop::JobShop() :
-		nAmountOfTasks(0), nAmountOfMachines(0), time(0) {
-	for (int i = 0; i < 0; ++i) {
-		this->machineState.push_back(false);
-	}
-	//Empty :O
-}
-*/
+ JobShop::JobShop() :
+ nAmountOfTasks(0), nAmountOfMachines(0), time(0) {
+ for (int i = 0; i < 0; ++i) {
+ this->machineState.push_back(false);
+ }
+ //Empty :O
+ }
+ */
 JobShop::JobShop(const std::string &filePath) {
 	this->readFile(filePath);
 }
@@ -89,9 +89,8 @@ void JobShop::readTasks(const std::string &fileName) {
 }
 
 void JobShop::schedule() {
-	unsigned long long time = 0;
+	calculateSlack(currentTime); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
 
-	calculateSlack(time); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
 	/*ToDo:
 	 - Bereken Slack < Klaar hoop ik
 	 - Bereken total duration < Klaar
@@ -105,9 +104,10 @@ void JobShop::schedule() {
 
 	sortTasks();
 
-	/* temporarily deactivated for obvious reasons :)
-	 while (!allJobsDone()) {
 
+	/*//temporarily deactivated for obvious reasons :)
+	 while (!allJobsDone()) {
+	 	++currentTime;
 	 }
 	 */
 	std::cout << "all Jobs Completed" << std::endl;
@@ -130,14 +130,13 @@ bool JobShop::allJobsDone() {
 	return true;
 }
 
-void JobShop::orderJobsByTotalDuration(std::vector<job> &jobs) const {
+void JobShop::orderJobsByTotalDuration() {
 	std::sort(jobs.begin(), jobs.end(), [](const job &job1, const job &job2) {
 		return job1 > job2;
 	});
 }
 
 void JobShop::sortTasks() { // i have no idea if this is going to function the way i want it to :)
-
 	std::cout
 			<< "----------------------------------------------------------------------------------------"
 			<< std::endl;
@@ -146,7 +145,7 @@ void JobShop::sortTasks() { // i have no idea if this is going to function the w
 		std::cout << job << std::endl;
 	}
 
-	orderJobsByTotalDuration(jobs); // least slack but different
+	orderJobsByTotalDuration(); // least slack but different
 
 	std::cout
 			<< "---sorted list ----------------------------------------------------------------------------------------"
@@ -159,8 +158,8 @@ void JobShop::sortTasks() { // i have no idea if this is going to function the w
 		if (job.getNextTask().getCurrentState() == NOT_COMPLETED
 				&& machineState[job.getNextTask().getMachineNumber()]
 						== false) {
+			job.getNextTask().activateTask(currentTime);
 			machineState[job.getNextTask().getMachineNumber()] = true;
-			job.getNextTask().activateTask(time);
 			sortedList.push_back(job.getNextTask());
 		}
 	}

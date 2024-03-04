@@ -13,6 +13,7 @@
 #include "global.h"
 #include "error.h"
 #include "task.h"
+#include <memory>
 
 /* Fucker...
 #define task int // placeholder for real task class
@@ -43,7 +44,7 @@ public:
     bool getJobsAvailable();
 
     task getTask(unsigned short index);
-    task getNextTask();
+    task& getNextTask() ;
 
     // --jobID_get
 	const unsigned short getJobID() const;

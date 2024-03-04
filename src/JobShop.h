@@ -24,6 +24,7 @@ public:
 	virtual ~JobShop(); //Destructor
 
     const std::vector<job> getJobs() const; //Mocht dit nodig zijn:
+    void setMachineState(unsigned short index);
     unsigned short getAmountOfTasks() const;
     unsigned short getAmountOfMachines() const;
     void schedule();
@@ -40,12 +41,12 @@ private:
 
     bool allJobsDone();
 
-    void orderJobsByTotalDuration(std::vector<job>& jobs) const;
+    void orderJobsByTotalDuration();
     void sortTasks();
 
     std::vector<bool> machineState;
     std::vector<job> jobs;
-    unsigned long long time;
+    unsigned long long currentTime;
     unsigned short nAmountOfTasks;
 	unsigned short nAmountOfMachines;
 };

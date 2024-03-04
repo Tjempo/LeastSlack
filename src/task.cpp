@@ -6,6 +6,7 @@
  */
 
 #include "task.h"
+#include "JobShop.h"
 
 // constructors + destructor
 /*
@@ -20,9 +21,8 @@ task::task(unsigned short ID, unsigned short machineNumber,
 		unsigned short duration) :
 		taskID(ID), machineNumber(machineNumber), duration(duration), currentState(
 				NOT_COMPLETED), earliestStartTime(0), startTime(0), endTime(0) {
-	std::cout << "Task created: " << ID << ", " << machineNumber << ", "
-			<< duration << std::endl;
-
+	/*std::cout << "Task created: " << ID << ", " << machineNumber << ", "
+			<< duration << std::endl;*/
 }
 
 task::task(const task &RHS) :
@@ -30,7 +30,8 @@ task::task(const task &RHS) :
 				RHS.duration), currentState(RHS.currentState), earliestStartTime(
 				RHS.earliestStartTime), startTime(RHS.startTime), endTime(
 				RHS.endTime) {
-
+	/*std::cout << "Task created: " << RHS.taskID << ", " << machineNumber << ", "
+				<< duration << std::endl;*/
 }
 
 task::~task() {
@@ -56,6 +57,7 @@ task& task::operator=(const task &RHS) {
 // functions
 
 void task::activateTask(unsigned long long time) {
+	std::cout << "activate task" << std::endl;
 	this->setState(IN_PROGRESS);
 	this->setStartTime(time);
 }
@@ -122,6 +124,8 @@ std::ostream& operator<<(std::ostream &os, const task &RHS) {
 		os << " NOT_COMPLETED";
 	} else if (RHS.getCurrentState() == IN_PROGRESS) {
 		os << " IN_PROGRESS";
+	} else {
+		os << "fuck";
 	}
 	os << " | EST: " << RHS.getEarliestStartTime();
 	os << " | ST: " << RHS.getStartTime();

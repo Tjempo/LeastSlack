@@ -12,6 +12,8 @@
 #include "global.h"
 #include <iostream>
 
+class JobShop;
+
 class task {
 public:
 	// constructors + destructor

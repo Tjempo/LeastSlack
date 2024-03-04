@@ -17,7 +17,7 @@ job::job(unsigned short ID, std::string jobString) : jobID(ID), totalJobDuration
 
     // Loop to read pairs of machineID and duration from jobString
     while (iss >> machineID >> duration) {
-        taskList.push_back(task(taskID++, machineID, duration));
+        taskList.push_back(task(++taskID, machineID, duration));
 		std::cout << "TaskID: " << taskID << std::endl;
 		std::cout << "MachineID: " << machineID << " Duration: " << duration << std::endl;
 	}
@@ -81,7 +81,7 @@ void job::calculateEST(unsigned long long time) {
                 task &currentTask = taskList[i];
 
                 // Calculate and set EST for the current task
-                unsigned long long EST = calculateEST(currentTask);
+                unsigned long long EST = calculateEST(currentTask) + time;
 				std::cout << "EST for task " << currentTask.getTaskID() << " is " << EST << std::endl;
                 if (EST < time) {
                     std::cout << "WOW! EST is smaller than time! O_o Impossible!" << std::endl;
@@ -161,15 +161,19 @@ bool job::getJobsAvailable(){
 }
 
 task job::getTask(unsigned short index) {
+
 	return this->taskList.at(index);
 }
 
-task job::getNextTask() {
-	for (task task : taskList) {
-		if(task.getCurrentState() != COMPLETED) {
-			return task;
+task& job::getNextTask() {
+	//std::cout << "job::getNextTask - begin" << std::endl;
+	for (unsigned short i = 0; i < taskList.size(); ++i) {
+		if(taskList[i].getCurrentState() != COMPLETED) {
+			//std::cout << "job::getNextTask - end" << std::endl;
+			return taskList[i];
 		}
 	}
+	//std::cout << "job::getNextTask - end" << std::endl;
 	return taskList.back();
 }
 
