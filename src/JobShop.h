@@ -42,9 +42,12 @@ private:
     bool allJobsDone();
 
     void orderJobsByTotalDuration();
+
+    void checkTaskProgress();
+
     void sortTasks();
 
-    std::vector<bool> machineState;
+    std::vector<bool> machineInUse;
     std::vector<job> jobs;
     unsigned long long currentTime;
     unsigned short nAmountOfTasks;

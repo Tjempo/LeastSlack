@@ -45,7 +45,7 @@ void JobShop::readFirstLine(const std::string &fileName) {
 
 	//Store Values:
 	for (int i = 0; i < machines; ++i) {
-		this->machineState.push_back(false);
+		this->machineInUse.push_back(false);
 	}
 
 	this->nAmountOfMachines = machines;
@@ -107,9 +107,17 @@ void JobShop::schedule() {
 
 	/*//temporarily deactivated for obvious reasons :)
 	 while (!allJobsDone()) {
+	 	 calculateSlack(currentTime);
+
+	 	 checkTaskProgress();
+
+	 	 sortTasks();
+
 	 	++currentTime;
 	 }
 	 */
+
+	// printJobResult(); // use \t for the tabs :)
 	std::cout << "all Jobs Completed" << std::endl;
 
 }
@@ -136,6 +144,10 @@ void JobShop::orderJobsByTotalDuration() {
 	});
 }
 
+void JobShop::checkTaskProgress() {
+	// placeholder
+}
+
 void JobShop::sortTasks() { // i have no idea if this is going to function the way i want it to :)
 	std::cout
 			<< "----------------------------------------------------------------------------------------"
@@ -156,10 +168,10 @@ void JobShop::sortTasks() { // i have no idea if this is going to function the w
 	for (job &job : jobs) {
 		std::cout << job << std::endl;
 		if (job.getNextTask().getCurrentState() == NOT_COMPLETED
-				&& machineState[job.getNextTask().getMachineNumber()]
+				&& machineInUse[job.getNextTask().getMachineNumber()]
 						== false) {
 			job.getNextTask().activateTask(currentTime);
-			machineState[job.getNextTask().getMachineNumber()] = true;
+			machineInUse[job.getNextTask().getMachineNumber()] = true;
 			sortedList.push_back(job.getNextTask());
 		}
 	}
