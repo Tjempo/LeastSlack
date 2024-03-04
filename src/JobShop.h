@@ -45,7 +45,7 @@ private:
 
     void checkTaskProgress();
 
-    void sortTasks();
+    void taskActivationManager();
 
     std::vector<bool> machineInUse;
     std::vector<job> jobs;

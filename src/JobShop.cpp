@@ -102,7 +102,7 @@ void JobShop::schedule() {
 	 - Zet taak naar {in progress}
 	 */
 
-	sortTasks();
+	taskActivationManager();
 
 
 	/*//temporarily deactivated for obvious reasons :)
@@ -148,7 +148,7 @@ void JobShop::checkTaskProgress() {
 	// placeholder
 }
 
-void JobShop::sortTasks() { // i have no idea if this is going to function the way i want it to :)
+void JobShop::taskActivationManager() { // i have no idea if this is going to function the way i want it to :)
 	std::cout
 			<< "----------------------------------------------------------------------------------------"
 			<< std::endl;
