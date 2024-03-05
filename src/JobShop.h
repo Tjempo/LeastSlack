@@ -47,6 +47,8 @@ private:
 
     void taskActivationManager();
 
+    void printJobResults();
+
     std::vector<unsigned long long> machineInUseUntil;
     std::vector<job> jobs;
     unsigned long long currentTime;

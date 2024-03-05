@@ -48,6 +48,8 @@ public:
 
     void checkTaskProgress(unsigned long long time);
 
+    void printJobDetails() const;
+
     // --jobID_get
 	const unsigned short getJobID() const;
 

@@ -200,7 +200,14 @@ const unsigned long long job::getTotalJobDuration() const {
 	return this->totalJobDuration;
 }
 
+void job::printJobDetails() const {
+	std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() << std::endl;
+}
+
 std::ostream& operator<<(std::ostream &os, const job &RHS) {
+
+
+
 	os << "| Job ID: ";
 	os << RHS.getJobID();
 	os << " | Duration: ";

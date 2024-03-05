@@ -112,25 +112,12 @@ void JobShop::schedule() {
 
 		taskActivationManager();
 
-		if (currentTime >= 140) {
-			break;
-		}
-
 		++currentTime;
 		std::cout << "Current time is: " << currentTime << std::endl;
 	}
 
-	// printJobResult(); // use \t for the tabs :)
+	printJobResults(); // use \t for the tabs :)
 	std::cout << "all Jobs Completed" << std::endl;
-
-	for (job job : jobs) {
-		std::cout << job.getNextTask() << std::endl;
-	}
-
-	for (unsigned long long i = 0; i < machineInUseUntil.size(); ++i) {
-		std::cout << "Machine in use until: " << machineInUseUntil[i]
-				<< std::endl;
-	}
 
 }
 
@@ -166,6 +153,13 @@ void JobShop::checkJobProgress() {
 //void JobShop::deactivateMachine(unsigned short index) {
 //	machineInUseUntil[index] = true;
 //}
+
+void JobShop::printJobResults() {
+	std::cout << "call: printJobResults()" << std::endl;
+	for (job &job : jobs) {
+		job.printJobDetails();
+	}
+}
 
 void JobShop::taskActivationManager() { // i have no idea if this is going to function the way i want it to :)
 
