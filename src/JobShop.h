@@ -24,7 +24,7 @@ public:
 	virtual ~JobShop(); //Destructor
 
     const std::vector<job> getJobs() const; //Mocht dit nodig zijn:
-    void setMachineState(unsigned short index);
+    void deactivateMachine(unsigned short index);
     unsigned short getAmountOfTasks() const;
     unsigned short getAmountOfMachines() const;
     void schedule();
@@ -47,7 +47,7 @@ private:
 
     void taskActivationManager();
 
-    std::vector<bool> machineInUse;
+    std::vector<unsigned long long> machineInUseUntil;
     std::vector<job> jobs;
     unsigned long long currentTime;
     unsigned short nAmountOfTasks;

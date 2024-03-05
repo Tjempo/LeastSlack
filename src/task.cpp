@@ -63,7 +63,7 @@ void task::activateTask(unsigned long long time) {
 }
 
 void task::finishTask(unsigned long long time) {
-	std::cout << "finish task" << this->getTaskID() << std::endl;
+	std::cout << "finish task with id" << this->getTaskID() << std::endl;
 	this->setState(COMPLETED);
 	this->setEndTime(time);
 }

@@ -181,6 +181,8 @@ void job::checkTaskProgress(unsigned long long time) {
 	for (task &task : taskList) {
 		if (task.getCurrentState() == IN_PROGRESS) {
 			if (task.getStartTime() + task.getDuration() == time) {
+				std::cout << "finish a task from job with number: " << getJobID() << std::endl;
+				std::cout << "with machinenumber: " << task.getMachineNumber() << std::endl;
 				task.finishTask(time);
 			}
 		}

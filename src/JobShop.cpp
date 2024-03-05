@@ -10,7 +10,8 @@
  //Empty :O
  }
  */
-JobShop::JobShop(const std::string &filePath) {
+JobShop::JobShop(const std::string &filePath) :
+		currentTime(0) {
 	this->readFile(filePath);
 }
 
@@ -45,7 +46,7 @@ void JobShop::readFirstLine(const std::string &fileName) {
 
 	//Store Values:
 	for (int i = 0; i < machines; ++i) {
-		this->machineInUse.push_back(false);
+		this->machineInUseUntil.push_back(0);
 	}
 
 	this->nAmountOfMachines = machines;
@@ -103,7 +104,6 @@ void JobShop::schedule() {
 	 */
 
 	//taskActivationManager();
-
 	//temporarily deactivated for obvious reasons :)
 	while (!allJobsDone()) {
 		calculateSlack(currentTime);
@@ -112,7 +112,7 @@ void JobShop::schedule() {
 
 		taskActivationManager();
 
-		if (currentTime > 140) {
+		if (currentTime >= 140) {
 			break;
 		}
 
@@ -122,6 +122,15 @@ void JobShop::schedule() {
 
 	// printJobResult(); // use \t for the tabs :)
 	std::cout << "all Jobs Completed" << std::endl;
+
+	for (job job : jobs) {
+		std::cout << job.getNextTask() << std::endl;
+	}
+
+	for (unsigned long long i = 0; i < machineInUseUntil.size(); ++i) {
+		std::cout << "Machine in use until: " << machineInUseUntil[i]
+				<< std::endl;
+	}
 
 }
 
@@ -149,35 +158,38 @@ void JobShop::orderJobsByTotalDuration() {
 
 void JobShop::checkJobProgress() {
 	// placeholder
-	for (job job : jobs) {
+	for (job &job : jobs) { // was hier het fucking & teken vergeten, hij paste dus eerst een lokaal ding aan
 		job.checkTaskProgress(currentTime);
 	}
 }
 
+//void JobShop::deactivateMachine(unsigned short index) {
+//	machineInUseUntil[index] = true;
+//}
+
 void JobShop::taskActivationManager() { // i have no idea if this is going to function the way i want it to :)
-	std::cout
-			<< "----------------------------------------------------------------------------------------"
-			<< std::endl;
-	// debuf print statement
-	for (job &job : jobs) {
-		std::cout << job << std::endl;
-	}
 
 	orderJobsByTotalDuration(); // least slack but different
 
-	std::cout
-			<< "---sorted list ----------------------------------------------------------------------------------------"
-			<< std::endl;
-
 	std::vector<task> sortedList;
 
+	for (unsigned long long i = 0; i < machineInUseUntil.size(); ++i) {
+		std::cout << "Machine in use until: " << machineInUseUntil[i]
+				<< std::endl;
+	}
+
 	for (job &job : jobs) {
-		std::cout << job << std::endl;
+//		std::cout << job << std::endl;
 		if (job.getNextTask().getCurrentState() == NOT_COMPLETED
-				&& machineInUse[job.getNextTask().getMachineNumber()]
-						== false) {
+				&& machineInUseUntil[job.getNextTask().getMachineNumber()]
+						<= currentTime) {
+			std::cout << "activate a task from job with number: "
+					<< job.getJobID() << std::endl;
+			std::cout << "with machinenumber: "
+					<< job.getNextTask().getMachineNumber() << std::endl;
+			machineInUseUntil[job.getNextTask().getMachineNumber()] =
+					currentTime + job.getNextTask().getDuration();
 			job.getNextTask().activateTask(currentTime);
-			machineInUse[job.getNextTask().getMachineNumber()] = true;
 			sortedList.push_back(job.getNextTask());
 		}
 	}

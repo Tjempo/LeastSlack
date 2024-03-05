@@ -1,5 +1,5 @@
-#ifndef STATE_H_
-#define STATE_H_
+#ifndef STATE_HPP_
+#define STATE_HPP_
 
 enum state {
 	NOT_COMPLETED,
@@ -9,4 +9,4 @@ enum state {
 
 
 
-#endif /* STATE_H_ */
+#endif /* STATE_HPP_ */

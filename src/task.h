@@ -8,9 +8,9 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-#include "state.h"
 #include "global.h"
 #include <iostream>
+#include "state.hpp"
 
 class JobShop;
 
