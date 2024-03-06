@@ -29,7 +29,7 @@ void JobShop::readFile(const std::string &fileName) {
 
 void JobShop::readFirstLine(const std::string &fileName) {
 	// Open file with exception handling:
-	std::cout << "FileName: " << fileName << std::endl;
+	//std::cout << "FileName: " << fileName << std::endl;
 
 	std::ifstream inputFile(fileName);
 	if (!inputFile) {
@@ -101,11 +101,11 @@ void JobShop::schedule() {
 		taskActivationManager();
 
 		++currentTime;
-		std::cout << "Current time is: " << currentTime << std::endl;
+		//std::cout << "Current time is: " << currentTime << std::endl;
 	}
 
 	printJobResults();
-	std::cout << "##### All Jobs Completed #####" << std::endl;
+	//std::cout << "##### All Jobs Completed #####" << std::endl;
 
 }
 
@@ -142,7 +142,10 @@ void JobShop::checkJobProgress() {
 //}
 
 void JobShop::printJobResults() {
-	std::cout << "call: printJobResults()" << std::endl;
+	//std::cout << "call: printJobResults()" << std::endl;
+	std::sort(jobs.begin(), jobs.end(), [](const job &job1, const job &job2) {
+		return job1.getJobID() < job2.getJobID();
+	});
 	for (job &job : jobs) {
 		job.printJobDetails();
 	}

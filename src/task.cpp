@@ -51,13 +51,13 @@ task& task::operator=(const task &RHS) {
 // Functions
 
 void task::activateTask(unsigned long long time) {
-	std::cout << "activate task with id" << this->getTaskID() << std::endl;
+	// std::cout << "activate task with id" << this->getTaskID() << std::endl;
 	this->setState(IN_PROGRESS);
 	this->setStartTime(time);
 }
 
 void task::finishTask(unsigned long long time) {
-	std::cout << "finish task with id" << this->getTaskID() << std::endl;
+	// std::cout << "finish task with id" << this->getTaskID() << std::endl;
 	this->setState(COMPLETED);
 	this->setEndTime(time);
 }

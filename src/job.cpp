@@ -16,9 +16,9 @@ job::job(unsigned short ID, std::string jobString) :
 	// Loop to read pairs of machineID and duration from jobString
 	while (iss >> machineID >> duration) {
 		taskList.push_back(task(++taskID, machineID, duration));
-		std::cout << "TaskID: " << taskID << std::endl;
-		std::cout << "MachineID: " << machineID << " Duration: " << duration
-				<< std::endl;
+//		std::cout << "TaskID: " << taskID << std::endl;
+//		std::cout << "MachineID: " << machineID << " Duration: " << duration
+//				<< std::endl;
 	}
 }
 
@@ -37,8 +37,8 @@ job::~job() {
 // Operators:
 
 job& job::operator=(const job &RHS) {
-	std::cout << "-------job::operator=------" << std::endl;
-	std::cout << RHS << std::endl;
+//	std::cout << "-------job::operator=------" << std::endl;
+//	std::cout << RHS << std::endl;
 	if (this == &RHS) {
 		std::cout << "this the same" << std::endl;
 		return *this;
@@ -53,6 +53,12 @@ job& job::operator=(const job &RHS) {
 bool job::operator<(const job &RHS) const {
 	if (this->getTotalJobDuration() < RHS.getTotalJobDuration()) {
 		return true;
+	}else if (this->getTotalJobDuration() == RHS.getTotalJobDuration()) {
+		if (this->getJobID() > RHS.getJobID()) {
+			return true;
+		} else {
+			return false;
+		}
 	} else {
 		return false;
 	}
@@ -61,6 +67,12 @@ bool job::operator<(const job &RHS) const {
 bool job::operator>(const job &RHS) const {
 	if (this->getTotalJobDuration() > RHS.getTotalJobDuration()) {
 		return true;
+	} else if (this->getTotalJobDuration() == RHS.getTotalJobDuration()) {
+		if (this->getJobID() < RHS.getJobID()) {
+			return true;
+		} else {
+			return false;
+		}
 	} else {
 		return false;
 	}
@@ -83,12 +95,12 @@ void job::calculateEST(unsigned long long time) {
 
 			// Calculate and set EST for the current task
 			unsigned long long EST = calculateEST(currentTask) + time;
-			std::cout << "EST for task " << currentTask.getTaskID() << " is "
-					<< EST << std::endl;
+//			std::cout << "EST for task " << currentTask.getTaskID() << " is "
+//					<< EST << std::endl;
 			currentTask.setEarliestStartTime(EST);
 		}
 	} else {
-		std::cout << "No more jobs available" << std::endl;
+//		std::cout << "No more jobs available" << std::endl;
 	}
 }
 
@@ -127,8 +139,8 @@ void job::calculateTotalDuration() {
 	}
 
 	this->totalJobDuration = totalDuration;
-	std::cout << "Total Duration of Job " << this->jobID << ": "
-			<< totalDuration << std::endl;
+//	std::cout << "Total Duration of Job " << this->jobID << ": "
+//			<< totalDuration << std::endl;
 }
 
 bool job::isJobDone() {
@@ -173,10 +185,10 @@ void job::checkTaskProgress(unsigned long long time) {
 	for (task &task : taskList) {
 		if (task.getCurrentState() == IN_PROGRESS) {
 			if (task.getStartTime() + task.getDuration() == time) {
-				std::cout << "finish a task from job with number: "
-						<< getJobID() << std::endl;
-				std::cout << "with machinenumber: " << task.getMachineNumber()
-						<< std::endl;
+//				std::cout << "finish a task from job with number: "
+//						<< getJobID() << std::endl;
+//				std::cout << "with machinenumber: " << task.getMachineNumber()
+//						<< std::endl;
 				task.finishTask(time);
 			}
 		}
