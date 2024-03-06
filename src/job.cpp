@@ -132,15 +132,16 @@ bool job::compareTasksByID(const task &task1, const task &task2) {
 //Calculate Duration:
 
 void job::calculateTotalDuration() {
-	unsigned long long totalDuration = 0;
-
-	for (const task &currentTask : taskList) {
-		totalDuration += currentTask.getDuration();
-	}
-
-	this->totalJobDuration = totalDuration;
-//	std::cout << "Total Duration of Job " << this->jobID << ": "
-//			<< totalDuration << std::endl;
+	//Oke ja check eerst sorteren waarom weet ik ook nog niet (Dit moet nu eigenlijk een functie worden tho)
+	//Ja oke dus daar komt ie:
+	//ToDo: Functie maken voor de sort:
+	std::sort(taskList.begin(), taskList.end(),
+				[this](const task &task1, const task &task2) {
+					return compareTasksByID(task1, task2);
+	});
+	//Dan pakken we het laatste item in de taskList - de 
+	auto previousTask = std::prev(taskList.end());
+	this->totalJobDuration = (previousTask->getDuration() + previousTask->getEarliestStartTime());
 }
 
 bool job::isJobDone() {
