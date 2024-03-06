@@ -1,23 +1,12 @@
-/*
- * job.h
- *
- *  Created on: 26 feb. 2024
- *      Author: roymu
- */
-
 #ifndef JOB_H_
 #define JOB_H_
 
 #include <iostream>
 #include <vector>
-#include "global.h"
 #include "error.h"
 #include "task.h"
-#include <memory>
 
-/* Fucker...
-#define task int // placeholder for real task class
-*/
+
 
 class job {
 public:
@@ -30,43 +19,37 @@ public:
 	bool operator<(const job &RHS) const;
 	bool operator>(const job &RHS) const;
 
-    void calculateEST(unsigned long long currentTime);
+	void calculateEST(unsigned long long currentTime);
 	unsigned long long calculateEST(const task &t);
 
-    bool compareTasksByID(const task &task1, const task &task2);
+	bool compareTasksByID(const task &task1, const task &task2);
 
-    void calculateTotalDuration();
+	void calculateTotalDuration();
 
-    bool isJobDone();
+	bool isJobDone();
 
-    // added getters, setters and other functions :)
+	void checkTaskProgress(unsigned long long time);
 
-    bool getJobsAvailable();
+	void printJobDetails() const;
 
-    task getTask(unsigned short index);
-    task& getNextTask();
+	//Getters and Setters:
+	bool getJobsAvailable();
 
-    void checkTaskProgress(unsigned long long time);
-
-    void printJobDetails() const;
-
-    // --jobID_get
 	const unsigned short getJobID() const;
-
-	// --totalJobDuration_get
 
 	const unsigned long long getTotalJobDuration() const;
 
+	task getTask(unsigned short index);
 
+	task& getNextTask();
 
 private:
 	unsigned short jobID;
 	unsigned long long totalJobDuration;
 	std::vector<task> taskList;
 
-
 };
 
-std::ostream& operator<<(std::ostream& os, const job& RHS);
+std::ostream& operator<<(std::ostream &os, const job &RHS);
 
 #endif /* JOB_H_ */

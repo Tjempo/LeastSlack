@@ -1,12 +1,9 @@
-/*
- * job.cpp
- *
- *  Created on: 26 feb. 2024
- *      Author: roymu
- */
-
 #include "job.h"
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <algorithm>
+#include <memory>
 
 job::job(unsigned short ID, std::string jobString) :
 		jobID(ID), totalJobDuration(0) {
@@ -34,10 +31,10 @@ job::job(const job &RHS) :
 }
 
 job::~job() {
-	// TODO Auto-generated destructor stub
+	// Destructor stub
 }
 
-// opperators
+// Operators:
 
 job& job::operator=(const job &RHS) {
 	std::cout << "-------job::operator=------" << std::endl;
@@ -88,12 +85,7 @@ void job::calculateEST(unsigned long long time) {
 			unsigned long long EST = calculateEST(currentTask) + time;
 			std::cout << "EST for task " << currentTask.getTaskID() << " is "
 					<< EST << std::endl;
-			if (EST < time) {
-				std::cout << "WOW! EST is smaller than time! O_o Impossible!"
-						<< std::endl;
-			} else {
-				currentTask.setEarliestStartTime(EST);
-			}
+			currentTask.setEarliestStartTime(EST);
 		}
 	} else {
 		std::cout << "No more jobs available" << std::endl;
@@ -181,32 +173,33 @@ void job::checkTaskProgress(unsigned long long time) {
 	for (task &task : taskList) {
 		if (task.getCurrentState() == IN_PROGRESS) {
 			if (task.getStartTime() + task.getDuration() == time) {
-				std::cout << "finish a task from job with number: " << getJobID() << std::endl;
-				std::cout << "with machinenumber: " << task.getMachineNumber() << std::endl;
+				std::cout << "finish a task from job with number: "
+						<< getJobID() << std::endl;
+				std::cout << "with machinenumber: " << task.getMachineNumber()
+						<< std::endl;
 				task.finishTask(time);
 			}
 		}
 	}
 }
 
-// --jobID_get
+// getJobID:
 const unsigned short job::getJobID() const {
 	return this->jobID;
 }
 
-// -- totalJobDuration_get
+// getTotalJobDuration:
 
 const unsigned long long job::getTotalJobDuration() const {
 	return this->totalJobDuration;
 }
 
 void job::printJobDetails() const {
-	std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() << std::endl;
+	std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t"
+			<< taskList.back().getEndTime() << std::endl;
 }
 
 std::ostream& operator<<(std::ostream &os, const job &RHS) {
-
-
 
 	os << "| Job ID: ";
 	os << RHS.getJobID();

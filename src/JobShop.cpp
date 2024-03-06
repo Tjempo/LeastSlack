@@ -1,5 +1,8 @@
 #include "JobShop.h"
+#include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 
 /*
  JobShop::JobShop() :
@@ -16,12 +19,7 @@ JobShop::JobShop(const std::string &filePath) :
 }
 
 JobShop::~JobShop() {
-	// TODO Auto-generated destructor stub
-}
-
-JobShop::JobShop(const JobShop &other) {
-	// TODO Auto-generated constructor stub
-
+	// Destructor stub
 }
 
 void JobShop::readFile(const std::string &fileName) {
@@ -52,10 +50,6 @@ void JobShop::readFirstLine(const std::string &fileName) {
 	this->nAmountOfMachines = machines;
 	this->nAmountOfTasks = tasks;
 
-	// Display values:
-	std::cout << "Tasks: " << this->nAmountOfTasks << std::endl;
-	std::cout << "Machines: " << this->nAmountOfMachines << std::endl;
-
 	// Close file:
 	inputFile.close();
 }
@@ -65,8 +59,7 @@ void JobShop::readTasks(const std::string &fileName) {
 
 	if (!inputFile) {
 		throw std::runtime_error(
-				"Error opening file: " + fileName + "\n"
-						+ "Check if it exists");
+			"Error opening file: " + fileName + "\n" + "Check if it exists");
 	}
 
 	std::string line;
@@ -80,7 +73,6 @@ void JobShop::readTasks(const std::string &fileName) {
 	unsigned short jobID = 0;
 	// Read and store the remaining lines
 	while (std::getline(inputFile, line)) {
-		// jobs.push_back(line);
 		jobs.push_back(job(jobID, line));
 		jobID++;
 	}
@@ -90,21 +82,17 @@ void JobShop::readTasks(const std::string &fileName) {
 }
 
 void JobShop::schedule() {
-	//calculateSlack(currentTime); //Vraag: Moet hier this-> voor en zoja wat is het nut daarvan? Answer: it is not required to use "this->", it is just to make the code more clear
-
 	/*ToDo:
 	 - Bereken Slack < Klaar hoop ik
 	 - Bereken total duration < Klaar
-	 - Bereken EST (Earliest Start Time)
+	 - Bereken EST (Earliest Start Time) < Klaar
 
 	 - Sorteer task op basis van slack
 	 - Start taak met laagste slack
-	 -
+	 - {Als taak gelijke slack heeft op basis van ID sorteren}
 	 - Zet taak naar {in progress}
 	 */
 
-	//taskActivationManager();
-	//temporarily deactivated for obvious reasons :)
 	while (!allJobsDone()) {
 		calculateSlack(currentTime);
 
@@ -116,8 +104,8 @@ void JobShop::schedule() {
 		std::cout << "Current time is: " << currentTime << std::endl;
 	}
 
-	printJobResults(); // use \t for the tabs :)
-	std::cout << "all Jobs Completed" << std::endl;
+	printJobResults();
+	std::cout << "##### All Jobs Completed #####" << std::endl;
 
 }
 
@@ -131,7 +119,7 @@ void JobShop::calculateSlack(unsigned long long &time) {
 bool JobShop::allJobsDone() {
 	for (job &job : jobs) {
 		if (job.isJobDone() == false) {
-			return false; // when a job is not completed, return false right away
+			return false; // When a job is not completed, return false right away
 		}
 	}
 	return true;
@@ -144,8 +132,7 @@ void JobShop::orderJobsByTotalDuration() {
 }
 
 void JobShop::checkJobProgress() {
-	// placeholder
-	for (job &job : jobs) { // was hier het fucking & teken vergeten, hij paste dus eerst een lokaal ding aan
+	for (job &job : jobs) {
 		job.checkTaskProgress(currentTime);
 	}
 }
@@ -161,42 +148,39 @@ void JobShop::printJobResults() {
 	}
 }
 
-void JobShop::taskActivationManager() { // i have no idea if this is going to function the way i want it to :)
-
-	orderJobsByTotalDuration(); // least slack but different
-
+void JobShop::taskActivationManager() {
+	orderJobsByTotalDuration();
 	std::vector<task> sortedList;
 
+	/*
 	for (unsigned long long i = 0; i < machineInUseUntil.size(); ++i) {
 		std::cout << "Machine in use until: " << machineInUseUntil[i]
 				<< std::endl;
 	}
+	*/
 
 	for (job &job : jobs) {
-//		std::cout << job << std::endl;
-		if (job.getNextTask().getCurrentState() == NOT_COMPLETED
-				&& machineInUseUntil[job.getNextTask().getMachineNumber()]
-						<= currentTime) {
-			std::cout << "activate a task from job with number: "
-					<< job.getJobID() << std::endl;
-			std::cout << "with machinenumber: "
-					<< job.getNextTask().getMachineNumber() << std::endl;
+		if (job.getNextTask().getCurrentState() == NOT_COMPLETED && machineInUseUntil[job.getNextTask().getMachineNumber()] <= currentTime) {
+			// std::cout << "activate a task from job with number: " << job.getJobID() << std::endl;
+			// std::cout << "with machinenumber: " << job.getNextTask().getMachineNumber() << std::endl;
 			machineInUseUntil[job.getNextTask().getMachineNumber()] =
 					currentTime + job.getNextTask().getDuration();
 			job.getNextTask().activateTask(currentTime);
 			sortedList.push_back(job.getNextTask());
 		}
 	}
-
+	/*
 	for (task task : sortedList) {
 		std::cout << task << std::endl;
 	}
+	*/
 }
 
 //Getters:
 unsigned short JobShop::getAmountOfTasks() const {
 	return this->nAmountOfTasks;
 }
+
 unsigned short JobShop::getAmountOfMachines() const {
 	return this->nAmountOfMachines;
 }
@@ -204,4 +188,3 @@ unsigned short JobShop::getAmountOfMachines() const {
 const std::vector<job> JobShop::getJobs() const {
 	return this->jobs;
 }
-

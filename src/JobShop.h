@@ -8,10 +8,7 @@
 #ifndef JOBSHOP_H_
 #define JOBSHOP_H_
 
-#include "global.h"
 #include "job.h"
-#include <fstream>
-#include <sstream>
 
 class JobShop {
 public:

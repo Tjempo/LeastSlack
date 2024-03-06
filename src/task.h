@@ -8,7 +8,6 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-#include "global.h"
 #include <iostream>
 #include "state.hpp"
 
@@ -24,30 +23,26 @@ public:
 	// operators
 	task& operator=(const task& RHS);
 
-	// functions
+	// Functions
 
 	void activateTask(unsigned long long time);
 	void finishTask(unsigned long long time);
 
-	// --taskID_get
+	// Getters:
 	unsigned short getTaskID() const;
-	// --machineNumber_get
 	unsigned short getMachineNumber() const;
-	// --duration_get
 	unsigned short getDuration() const;
-	// --state_get_set
-	void setState(state state);
-    state getCurrentState() const;
-    // state getCurrentState(); // DEPRECATED
-    // -- earliestStartTime_get_set
-	void setEarliestStartTime(unsigned long time);
-	unsigned long getEarliestStartTime() const;
-	// --startTime_get_set
-	void setStartTime(unsigned long time);
 	unsigned long getStartTime() const;
-	// --endTime_get_set
-	void setEndTime(unsigned long time);
 	unsigned long getEndTime() const ;
+	unsigned long getEarliestStartTime() const;
+	state getCurrentState() const;
+
+	// Setters:
+	void setEarliestStartTime(unsigned long time);
+	void setState(state state);
+	void setStartTime(unsigned long time);
+	void setEndTime(unsigned long time);
+
 
 
 private:

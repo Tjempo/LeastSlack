@@ -1,10 +1,3 @@
-/*
- * task.cpp
- *
- *  Created on: 26 feb. 2024
- *      Author: roymu
- */
-
 #include "task.h"
 #include "JobShop.h"
 
@@ -35,9 +28,10 @@ task::task(const task &RHS) :
 }
 
 task::~task() {
-	// TODO Auto-generated destructor stub
+	// Destructor stub
 }
-// operators
+
+// Operator=
 task& task::operator=(const task &RHS) {
 	if (this == &RHS) {
 		std::cout << "this the same" << std::endl;
@@ -54,7 +48,7 @@ task& task::operator=(const task &RHS) {
 	return *this;
 }
 
-// functions
+// Functions
 
 void task::activateTask(unsigned long long time) {
 	std::cout << "activate task with id" << this->getTaskID() << std::endl;
@@ -68,31 +62,32 @@ void task::finishTask(unsigned long long time) {
 	this->setEndTime(time);
 }
 
-//--taskID_get
+// getTaskID:
 unsigned short task::getTaskID() const {
 	return this->taskID;
 }
 
-// --machineNumber_get
+// getMachineNumber:
 unsigned short task::getMachineNumber() const {
 	return this->machineNumber;
 }
 
-// --duration_get
+// getDuration:
 unsigned short task::getDuration() const {
 	return this->duration;
 }
 
-// --state_get_set
+// setState:
 void task::setState(state state) {
 	this->currentState = state;
 }
 
+// getCurrentState:
 state task::getCurrentState() const {
 	return this->currentState;
 }
 
-// -- earliestStartTime_get_set
+// setEarliestStartTime:
 void task::setEarliestStartTime(unsigned long time) {
 	this->earliestStartTime = time;
 }
@@ -100,24 +95,28 @@ unsigned long task::getEarliestStartTime() const {
 	return this->earliestStartTime;
 }
 
-// --startTime_get_set
+// setStartTime:
 void task::setStartTime(unsigned long time) {
 	this->startTime = time;
 }
 
+//getStartTime:
 unsigned long task::getStartTime() const {
 	return this->startTime;
 }
 
-// --endTime_get_set
+// setEndTime:
 void task::setEndTime(unsigned long time) {
 	this->endTime = time;
 }
 
+// getEndTime:
 unsigned long task::getEndTime() const {
 	return this->endTime;
 }
 
+
+// Stream Operator:
 std::ostream& operator<<(std::ostream &os, const task &RHS) {
 	os << "task: " << std::endl;
 	os << "| task ID: " << RHS.getTaskID();
