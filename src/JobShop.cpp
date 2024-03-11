@@ -101,6 +101,7 @@ void JobShop::schedule() {
 		taskActivationManager();
 
 		++currentTime;
+
 		//std::cout << "Current time is: " << currentTime << std::endl;
 	}
 
@@ -152,32 +153,35 @@ void JobShop::printJobResults() {
 }
 
 void JobShop::taskActivationManager() {
-	orderJobsByTotalDuration();
-	std::vector<task> sortedList;
-
-	/*
+ orderJobsByTotalDuration();
 	for (unsigned long long i = 0; i < machineInUseUntil.size(); ++i) {
-		std::cout << "Machine in use until: " << machineInUseUntil[i]
-				<< std::endl;
-	}
-	*/
-
-	for (job &job : jobs) {
-		if (job.getNextTask().getCurrentState() == NOT_COMPLETED && machineInUseUntil[job.getNextTask().getMachineNumber()] <= currentTime) {
-			// std::cout << "activate a task from job with number: " << job.getJobID() << std::endl;
-			// std::cout << "with machinenumber: " << job.getNextTask().getMachineNumber() << std::endl;
-			machineInUseUntil[job.getNextTask().getMachineNumber()] =
-					currentTime + job.getNextTask().getDuration();
-			job.getNextTask().activateTask(currentTime);
-			sortedList.push_back(job.getNextTask());
+//		std::cout << "Machine in use until: " << machineInUseUntil[i]<< std::endl;
+//		std::cout << "Current time: " << currentTime << std::endl;
+		if (machineInUseUntil[i] == currentTime) {
+//			std::cout << "Deactivate machine: " << i << std::endl;
+			machineInUseUntil[i] = 0;
 		}
 	}
-	/*
-	for (task task : sortedList) {
-		std::cout << task << std::endl;
-	}
-	*/
+
+
+    for(job &job : jobs) {
+        for(task &task : job.getTaskList()) {
+            if (task.getCurrentState() == NOT_COMPLETED && machineInUseUntil[task.getMachineNumber()] == 0) {
+                // std::cout << "------------------------------------------------------------------------------------------" << std::endl;
+                //             std::cout << "jobID: " << job.getJobID() << std::endl;
+                //             std::cout << "job Duration: " << job.getTotalJobDuration() << std::endl;
+                //             std::cout << task << std::endl;
+                machineInUseUntil[task.getMachineNumber()] =
+                                    currentTime + task.getDuration();
+                task.activateTask(currentTime);
+                break;
+            } else if (task.getCurrentState() == IN_PROGRESS) {
+                break;
+            }
+        }
+    }
 }
+
 
 //Getters:
 unsigned short JobShop::getAmountOfTasks() const {

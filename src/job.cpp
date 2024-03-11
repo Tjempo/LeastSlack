@@ -16,39 +16,33 @@ job::job(unsigned short ID, std::string jobString) :
 	// Loop to read pairs of machineID and duration from jobString
 	while (iss >> machineID >> duration) {
 		taskList.push_back(task(++taskID, machineID, duration));
-//		std::cout << "TaskID: " << taskID << std::endl;
-//		std::cout << "MachineID: " << machineID << " Duration: " << duration
-//				<< std::endl;
 	}
 }
 
 job::job(const job &RHS) :
-		jobID(RHS.jobID)/*, taskList(RHS.taskList)*/, totalJobDuration(
-				RHS.totalJobDuration) {
-	for (task task : RHS.taskList) {
-		this->taskList.push_back(task);
-	}
+    jobID(RHS.jobID), totalJobDuration(RHS.totalJobDuration) {
+    for (const task& task : RHS.taskList) {
+        this->taskList.push_back(task);
+    }
 }
+
 
 job::~job() {
 	// Destructor stub
 }
 
 // Operators:
-
 job& job::operator=(const job &RHS) {
-//	std::cout << "-------job::operator=------" << std::endl;
-//	std::cout << RHS << std::endl;
-	if (this == &RHS) {
-		std::cout << "this the same" << std::endl;
-		return *this;
-	} else {
-		this->jobID = RHS.getJobID();
-		this->totalJobDuration = RHS.getTotalJobDuration();
-		this->taskList = RHS.taskList;
-		return *this;
-	}
+    if (this == &RHS) {
+        return *this;
+    } else {
+        this->jobID = RHS.getJobID();
+        this->totalJobDuration = RHS.getTotalJobDuration();
+        this->taskList = RHS.taskList; // This involves copying
+        return *this;
+    }
 }
+
 
 bool job::operator<(const job &RHS) const {
 	if (this->getTotalJobDuration() < RHS.getTotalJobDuration()) {
@@ -68,7 +62,7 @@ bool job::operator>(const job &RHS) const {
 	if (this->getTotalJobDuration() > RHS.getTotalJobDuration()) {
 		return true;
 	} else if (this->getTotalJobDuration() == RHS.getTotalJobDuration()) {
-		if (this->getJobID() < RHS.getJobID()) {
+		if (this->getJobID() > RHS.getJobID()) {
 			return true;
 		} else {
 			return false;
@@ -80,23 +74,18 @@ bool job::operator>(const job &RHS) const {
 
 // Functions
 
+void job::sortByTaskID(){
+	std::sort(this->taskList.begin(), this->taskList.end());
+}
+
+//Time Calculations:
 void job::calculateEST(unsigned long long time) {
 	if (getJobsAvailable()) {
-		// Sort taskList by task ID for efficient predecessor search
-		std::sort(taskList.begin(), taskList.end(),
-				[this](const task &task1, const task &task2) {
-					return compareTasksByID(task1, task2);
-				});
+		sortByTaskID();
 
-		// Loop through tasks and calculate EST
 		for (size_t i = 0; i < taskList.size(); ++i) {
-			// Get the current task reference
 			task &currentTask = taskList[i];
-
-			// Calculate and set EST for the current task
 			unsigned long long EST = calculateEST(currentTask) + time;
-//			std::cout << "EST for task " << currentTask.getTaskID() << " is "
-//					<< EST << std::endl;
 			currentTask.setEarliestStartTime(EST);
 		}
 	} else {
@@ -110,8 +99,7 @@ unsigned long long job::calculateEST(const task &t) {
 	};
 
 	// Find the previous task
-	auto previousTaskID = std::find_if(taskList.begin(), taskList.end(),
-			getPreviousTask);
+	auto previousTaskID = std::find_if(taskList.begin(), taskList.end(),getPreviousTask);
 	// If the previous task is not found, it means the current task is the first task
 
 	if (previousTaskID == taskList.end()) {
@@ -119,33 +107,21 @@ unsigned long long job::calculateEST(const task &t) {
 		return 0;
 	}
 	// Calculate EST using predecessor's earliest start time and duration
-	return (previousTaskID->getEarliestStartTime()
-			+ previousTaskID->getDuration());
-}
-
-//Compare tasks by taskID
-
-bool job::compareTasksByID(const task &task1, const task &task2) {
-	return task1.getTaskID() < task2.getTaskID();
+	return (previousTaskID->getEarliestStartTime() + previousTaskID->getDuration());
 }
 
 //Calculate Duration:
 
 void job::calculateTotalDuration() {
-	//Oke ja check eerst sorteren waarom weet ik ook nog niet (Dit moet nu eigenlijk een functie worden tho)
-	//Ja oke dus daar komt ie:
-	//ToDo: Functie maken voor de sort:
-	std::sort(taskList.begin(), taskList.end(),
-				[this](const task &task1, const task &task2) {
-					return compareTasksByID(task1, task2);
-	});
-	//Dan pakken we het laatste item in de taskList - de 
+	sortByTaskID();
+	//Dan pakken we het laatste item in de taskList
 	auto previousTask = std::prev(taskList.end());
 	this->totalJobDuration = (previousTask->getDuration() + previousTask->getEarliestStartTime());
 }
 
 bool job::isJobDone() {
 	for (task &currentTask : taskList) {
+		//Count amount of unfinished tasks:
 		if (currentTask.getCurrentState() != COMPLETED) {
 			return false;
 		}
@@ -165,31 +141,42 @@ bool job::getJobsAvailable() {
 	return false; //< To avoid compiler warning >
 }
 
-task job::getTask(unsigned short index) {
-
-	return this->taskList.at(index);
+const task& job::getTask(unsigned short index) const {
+    return this->taskList.at(index);
 }
 
+
+//Ik denk dat het hier niet goed gaat:
 task& job::getNextTask() {
-	//std::cout << "job::getNextTask - begin" << std::endl;
-	for (unsigned short i = 0; i < taskList.size(); ++i) {
-		if (taskList[i].getCurrentState() != COMPLETED) {
-			//std::cout << "job::getNextTask - end" << std::endl;
-			return taskList[i];
-		}
-	}
-	//std::cout << "job::getNextTask - end" << std::endl;
-	return taskList.back();
+    sortByTaskID();
+
+    for (unsigned short i = 0; i < taskList.size(); ++i) {
+        if (taskList[i].getCurrentState() != COMPLETED) {
+            return taskList[i];
+        }
+    }
+
+    // If all tasks are completed, return the first task (the one with the lowest task ID)
+    // Assuming that a job always has at least one task
+    // If a job might have no tasks, you should handle that case separately
+    // (e.g., throw an exception or return a special value)
+    //std::cout << "job::getNextTask - end" << std::endl;
+    return taskList.front();
 }
+
 
 void job::checkTaskProgress(unsigned long long time) {
 	for (task &task : taskList) {
 		if (task.getCurrentState() == IN_PROGRESS) {
+			// std::cout << "Found task with in progress" << std::endl;
+			// std::cout << "StartTime: " << task.getStartTime() << std::endl;
+			// std::cout << "Duration: " << task.getDuration() << std::endl;
+			// std::cout << "Current Time: " << time << std::endl;
+
 			if (task.getStartTime() + task.getDuration() == time) {
-//				std::cout << "finish a task from job with number: "
-//						<< getJobID() << std::endl;
-//				std::cout << "with machinenumber: " << task.getMachineNumber()
-//						<< std::endl;
+//				std::cout << "I finished a task! "<< getJobID() << std::endl;
+//				std::cout << "TaskID = " << task.getTaskID() << std::endl;
+//				std::cout << "with machinenumber: " << task.getMachineNumber()<< std::endl;
 				task.finishTask(time);
 			}
 		}
@@ -197,13 +184,13 @@ void job::checkTaskProgress(unsigned long long time) {
 }
 
 // getJobID:
-const unsigned short job::getJobID() const {
+unsigned short job::getJobID() const {
 	return this->jobID;
 }
 
 // getTotalJobDuration:
 
-const unsigned long long job::getTotalJobDuration() const {
+unsigned long long job::getTotalJobDuration() const {
 	return this->totalJobDuration;
 }
 
@@ -223,3 +210,15 @@ std::ostream& operator<<(std::ostream &os, const job &RHS) {
 	return os;
 }
 
+bool job::hasActiveTasks() const {
+    for (const task &currentTask : taskList) {
+        if (currentTask.getCurrentState() == IN_PROGRESS) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<task>& job::getTaskList() {
+    return this->taskList;
+}

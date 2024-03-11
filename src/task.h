@@ -22,8 +22,9 @@ public:
 	virtual ~task();
 	// operators
 	task& operator=(const task& RHS);
+    bool operator<(const task &RHS) const;
 
-	// Functions
+    // Functions
 
 	void activateTask(unsigned long long time);
 	void finishTask(unsigned long long time);
@@ -32,16 +33,19 @@ public:
 	unsigned short getTaskID() const;
 	unsigned short getMachineNumber() const;
 	unsigned short getDuration() const;
-	unsigned long getStartTime() const;
-	unsigned long getEndTime() const ;
-	unsigned long getEarliestStartTime() const;
-	state getCurrentState() const;
+	unsigned long long getStartTime() const;
+	unsigned long long getEndTime() const ;
+    bool getTaskStarted() const;
+    unsigned long long getEarliestStartTime() const;
+    state getCurrentState() const;
 
 	// Setters:
-	void setEarliestStartTime(unsigned long time);
+	void setEarliestStartTime(unsigned long long time);
 	void setState(state state);
-	void setStartTime(unsigned long time);
-	void setEndTime(unsigned long time);
+	void setStartTime(unsigned long long time);
+	void setEndTime(unsigned long long time);
+
+	friend std::ostream& operator<<(std::ostream& os, const task& RHS);
 
 
 
@@ -50,11 +54,11 @@ private:
 	unsigned short machineNumber;
 	unsigned short duration;
 	state currentState;
-	unsigned long earliestStartTime;
-	unsigned long startTime;
-	unsigned long endTime;
+	unsigned long long earliestStartTime;
+	unsigned long long startTime;
+	unsigned long long endTime;
 };
 
-std::ostream& operator<<(std::ostream& os, const task& RHS);
+
 
 #endif /* TASK_H_ */

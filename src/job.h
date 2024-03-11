@@ -19,10 +19,10 @@ public:
 	bool operator<(const job &RHS) const;
 	bool operator>(const job &RHS) const;
 
-	void calculateEST(unsigned long long currentTime);
-	unsigned long long calculateEST(const task &t);
+    void sortByTaskID();
 
-	bool compareTasksByID(const task &task1, const task &task2);
+    void calculateEST(unsigned long long currentTime);
+    unsigned long long calculateEST(const task &t);
 
 	void calculateTotalDuration();
 
@@ -32,22 +32,23 @@ public:
 
 	void printJobDetails() const;
 
-	//Getters and Setters:
+    bool hasActiveTasks() const;
+
+    //Getters and Setters:
 	bool getJobsAvailable();
 
-	const unsigned short getJobID() const;
+	unsigned short getJobID() const;
 
-	const unsigned long long getTotalJobDuration() const;
+	unsigned long long getTotalJobDuration() const;
 
-	task getTask(unsigned short index);
+	const task& getTask(unsigned short index) const;
 
 	task& getNextTask();
-
+	std::vector<task> &getTaskList();
 private:
 	unsigned short jobID;
 	unsigned long long totalJobDuration;
 	std::vector<task> taskList;
-
 };
 
 std::ostream& operator<<(std::ostream &os, const job &RHS);
