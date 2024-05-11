@@ -14,7 +14,7 @@ class JobShop {
 public:
 	JobShop() = delete; //Empty construcor
     JobShop(const std::string &filePath);
-    JobShop(const JobShop &other); //Copy constructor
+    JobShop(const JobShop &other) = delete; //Copy constructor
 
     void readFile(const std::string &fileName);
 

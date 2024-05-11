@@ -7,3 +7,4 @@ Debug/src/main.o
 .settings/language.settings.xml
 Debug/SlackOpdracht.exe
 Debug/src/main.o
+*.exe

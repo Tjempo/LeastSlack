@@ -132,14 +132,15 @@ bool job::isJobDone() {
 // Getters 
 
 bool job::getJobsAvailable() {
-	for (const task &currentTask : taskList) {
-		if (!currentTask.getCurrentState() == NOT_COMPLETED) {
-			return false;
-		}
-		return true;
-	}
-	return false; //< To avoid compiler warning >
+    for (const task &currentTask : taskList) {
+        std::cout << "Current Task: "  << currentTask.getTaskID() << " " << currentTask.getCurrentState() << std::endl;
+        if (currentTask.getCurrentState() != NOT_COMPLETED) {
+            return false;
+        }
+    }
+    return true;
 }
+
 
 const task& job::getTask(unsigned short index) const {
     return this->taskList.at(index);
