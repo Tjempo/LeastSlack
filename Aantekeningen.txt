@@ -1,0 +1,2 @@
+- Misschien ipv over al een typedef een global .cpp waar die in staat? 
+
