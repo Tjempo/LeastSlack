@@ -1,3 +1,7 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
+
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -6,16 +10,16 @@
 #include <vector>
 
 
-class config
+class Config
 {
 private:
     unsigned short amountOfJobs;
 	unsigned short amountOfMachines;
 
-    std::vector<std::vector<unsigned short>> configData; //Vector that stores vectors of unsigned shorts 
+    std::vector<std::vector<unsigned short>> ConfigData; //Vector that stores vectors of unsigned shorts 
 public:
-    config(/* args */);
-    ~config();
+    Config(/* args */);
+    ~Config();
 
     void readConfig(const std::string & fileName);
     void readFirstLine(const std::string & fileName);
@@ -27,5 +31,6 @@ public:
     void printConfigData();
 };
 
-std::ostream& operator<<(std::ostream &os, const config &conf);
+std::ostream& operator<<(std::ostream &os, const Config &conf);
 
+#endif // CONFIG_HPP

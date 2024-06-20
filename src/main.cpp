@@ -1,9 +1,8 @@
 #include <iostream>
 #include <filesystem>
 
-#include "config.hpp"
-
-
+#include "Config.hpp"
+#include "JobShop.hpp"
 
 //Main function:
 int main(int argc, char **argv) {
@@ -23,13 +22,12 @@ int main(int argc, char **argv) {
 	//Try to run the program:
 	try {
         //Read file & Create Jobs:
-		config conf;
+		Config conf;
 		conf.readConfig(argv[1]);
+
 		//Run the program:
-
-		// JobShop jobShop(conf);
-
-		// jobShop.run();
+		JobShop JS(conf);
+		JS.run();
 		
 		return 0;
 	}

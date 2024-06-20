@@ -1,2 +1,11 @@
-- Misschien ipv over al een typedef een global .cpp waar die in staat? 
+- Misschien ipv over al een typedef een global.cpp waar timeUnit wordt genoteerd? 
 
+- Task state enum ipv een bool
+
+
+- Compile met 
+g++ -o LeastSlack $(find . -name '*.cpp' -or -name '*.hpp') -std=c++17 -Wall -Wextra
+
+
+- Compile met -O2 voor betere optimization during compilation
+g++ -o LeastSlack $(find . -name '*.cpp' -or -name '*.hpp') -std=c++17 -Wall -Wextra -O2

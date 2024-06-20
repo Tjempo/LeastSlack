@@ -1,18 +1,18 @@
 #ifndef MACHINE_HPP_
 #define MACHINE_HPP_
 
-typedef unsigned long long timeUnit;
+typedef unsigned long long int timeType;
 
 class Machine
 {
 private:
-    timeUnit availabeAtTime = 0;
+    timeType availabeAtTime = 0;
     
 public:
     Machine(/* args */);
     ~Machine();
-    timeUnit getAvailabeAtTime();
-    bool getBusy(timeUnit currentTime);
+    timeType getAvailabeAtTime();
+    bool getBusy(timeType currentTime);
     void startMachine(unsigned short currentTime, unsigned short duration);
 };
 

@@ -11,11 +11,11 @@ Machine::~Machine() {}
 
 //*** Getters & Setters***
 
-timeUnit Machine::getAvailabeAtTime() {
+timeType Machine::getAvailabeAtTime() {
 	return availabeAtTime;
 }
 
-bool Machine::getBusy(timeUnit currentTime){
+bool Machine::getBusy(timeType currentTime){
     return currentTime < availabeAtTime;
 }
 

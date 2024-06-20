@@ -4,22 +4,22 @@
 //*** Constructors & Destructor ***//
 
 
-config::config(/* args */){
+Config::Config(/* args */){
 }
 
-config::~config(){
+Config::~Config(){
 }
 
 
 //*** Methods ***//
 
-void config::readConfig(const std::string &fileName) {
+void Config::readConfig(const std::string &fileName) {
 	this->readFirstLine(fileName);
 	this->readTasks(fileName);
 }
 
 
-void config::readFirstLine(const std::string &fileName) {
+void Config::readFirstLine(const std::string &fileName) {
 	// Open file with exception handling:
 	std::ifstream inputFile(fileName);
 	if (!inputFile) {
@@ -38,7 +38,7 @@ void config::readFirstLine(const std::string &fileName) {
 
 
 
-void config::readTasks(const std::string &fileName) {
+void Config::readTasks(const std::string &fileName) {
     std::ifstream inputFile(fileName);
     std::string line;
 
@@ -69,10 +69,10 @@ void config::readTasks(const std::string &fileName) {
         }
 
         // Store the current job data in the class:
-        configData.push_back(currentJob);
+        ConfigData.push_back(currentJob);
 
         // Break if the number of jobs read exceeds or equals the specified count
-        if (configData.size() >= this->amountOfJobs) {
+        if (ConfigData.size() >= this->amountOfJobs) {
 			printConfigData(); 
             break;
         }
@@ -83,32 +83,31 @@ void config::readTasks(const std::string &fileName) {
 
 //*** Getters & Setters ***//
 
-unsigned short config::getAmountOfJobs() const{
+unsigned short Config::getAmountOfJobs() const{
 	return this->amountOfJobs;
 }
 
-unsigned short config::getAmountOfMachines() const{
+unsigned short Config::getAmountOfMachines() const{
 	return this->amountOfMachines;
 }
 
-const std::vector<std::vector<unsigned short>>& config::getConfigVector() const {
-	return this->configData;
+const std::vector<std::vector<unsigned short>>& Config::getConfigVector() const {
+	return this->ConfigData;
 }
 
 
-
 //*** Steam operator ***//
-std::ostream& operator<<(std::ostream &os, const config &conf) {
+std::ostream& operator<<(std::ostream &os, const Config &conf) {
 	os << "Amount of jobs: " << conf.getAmountOfJobs() << std::endl;
 	os << "Amount of machines: " << conf.getAmountOfMachines() << std::endl;
 	return os;
 }
 
 //For debugging purposes:
-void config::printConfigData(){
+void Config::printConfigData(){
 	// Print the entire vector after the loop
     std::cout << "Jobs Vector:" << std::endl;
-    for (const auto &job : configData) {
+    for (const auto &job : ConfigData) {
         for (unsigned short value : job) {
             std::cout << value << " ";
         }

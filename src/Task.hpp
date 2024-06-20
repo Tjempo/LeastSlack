@@ -4,20 +4,21 @@
 #include <iostream>
 #include <string>
 
-typedef unsigned long long timeUnit;
+typedef unsigned long long timeType;
 
 class Task {
 private:
-	timeUnit taskId;
-	timeUnit machineNumber;
-	timeUnit duration;
-	timeUnit EST; //Earliest Start Time
-	timeUnit startTime;
-	timeUnit endTime;
+	timeType taskId;
+	timeType machineNumber;
+	timeType duration;
+	timeType EST; //Earliest Start Time
+	timeType startTime;
+	timeType endTime;
 
 public:
 	Task();
-    Task(timeUnit id, timeUnit machineNr, timeUnit duration);
+    Task(timeType id, timeType machineNr, timeType duration);
+	Task(const Task &rhs);
     ~Task();
 
 	//Logic Operators:
@@ -26,12 +27,22 @@ public:
     bool operator==(const Task &rhs);
 
     // Getters:
-    timeUnit getTaskId() const;
-	timeUnit getMachineNumber() const;
-	timeUnit getDuration() const;
-	timeUnit getEST() const;
-	timeUnit getStartTime() const;
-	timeUnit getEndTime() const;
+    timeType getTaskId() const;
+	timeType getMachineNumber() const;
+	timeType getTaskDuration() const;
+	timeType getEST() const;
+	timeType getStartTime() const;
+	timeType getEndTime() const;
+
+	//Dit kan beter
+    bool getTaskStarted() const;
+    bool getTaskBusy(unsigned short currentTime) const;
+    bool getTaskDone(unsigned short currentTime) const;
+    void setEST(timeType newEST);
+	
+    void startTask(unsigned short startTime);
 };
+
+std::ostream& operator<<(std::ostream &os, const Task &t);
 
 #endif /* TASK_HPP_ */
