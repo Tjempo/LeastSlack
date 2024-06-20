@@ -1,23 +1,23 @@
 #include "Job.hpp"
 
-//*** Constructors & Destructors ***
+//*** Constructor and Destructor ***
 
-Job::Job(unsigned short jobId, const std::vector<unsigned short> &Config) : id(jobId){
-    //Reserve memory:
-	taskList.reserve(Config.size() / 2);
-    //Create tasks from the Config vector:
-    for (size_t i = 0; i < Config.size(); ++i) {
-        if (i % 2 == 0) {
-            taskList.emplace_back(Task(i / 2, Config[i], Config[i + 1]));
-            // std::cout << "Task " << i << " = " << Config[i] << ","<< Config[i + 1] << std::endl;
-        }
+Job::Job(): jobID(0), jobDuration(0), slackTime(0){
+    std::cout << "Job created with no args." << std::endl;
+}
+
+Job::Job(unsigned short id, const std::vector<unsigned short> &config): jobID(id), jobDuration(0), slackTime(0){
+    std::cout << "Job created with args." << std::endl;
+    for(unsigned short i = 0; i < config.size(); i+=2){
+        taskList.push_back(Task(i / 2, config[i], config[i + 1]));
     }
 }
 
-Job::~Job(){}
+Job::~Job(){
+}
 
-//*** Functions *** //
 
+// *** Functions ***:
 void Job::sortTasksByID(){
 	std::sort(this->taskList.begin(), this->taskList.end());
 }
@@ -25,133 +25,94 @@ void Job::sortTasksByID(){
 
 //*** Calculations *** //
 
-void Job::calculateEST(timeType currentTime){
-    if (this->getJobsAvailable()){
-        sortTasksByID();
-        auto nextTaskIter = std::find(taskList.begin(), taskList.end(), getNextTask());
-        if (nextTaskIter != taskList.end())
-            nextTaskIter->setEST(currentTime);
+void Job::calculateEST(timeType &currentTime){
+    if(!getTasksAvailable()){
+        return;
+    }
+    this->sortTasksByID();
+    auto& nextTask = this->getNextTask();
 
-        for (auto it = nextTaskIter + 1; it != taskList.end(); ++it) {
-        // Calculate earliest start time based on dependencies
-        it->setEST(calculateEST(*it));
+    auto next = std::find(taskList.begin(), taskList.end(), nextTask);
+	if (next == taskList.end()){
+		return;
+    }
+
+    for (auto it = next; it != taskList.end(); it++){
+        if(it == next || it->getTaskId() == 0){
+            it->setEST(currentTime); 
+        }else{
+            it->setEST(calculateEST(*it));
         }
     }
 }
 
-//Old function from previous version. Might be broken.
-timeType Job::calculateEST(Task &t){
-    auto getPreviousTask = [&t](const Task &ts) {
+timeType Job::calculateEST(const Task &t) {
+	auto getPreviousTask = [&t](const Task &ts) {
 		return ts.getTaskId() == (t.getTaskId() - 1);
 	};
-	auto previousTaskID = std::find_if(taskList.begin(), taskList.end(),getPreviousTask);
 	// If the previous task is not found, it means the current task is the first task
-
+	auto previousTaskID = std::find_if(taskList.begin(), taskList.end(),getPreviousTask);
 	if (previousTaskID == taskList.end()) {
-		// If it is, it can start immediately
+		// If it is, it can start immediately, so return 0:
 		return 0;
 	}
-	// Calculate EST using predecessor's earliest start time and duration
-	return (previousTaskID->getEST() + previousTaskID->getTaskDuration());
+	return (previousTaskID->getEST() + previousTaskID->getTaskDuration()); //else
 }
 
-void Job::calculateTotalJobDuration(){
-    sortTasksByID();
+
+void Job::calculateJobDuration() {
+	this->sortTasksByID();
 	Task lastTask = taskList.back();
-	totalDuration = lastTask.getEST() + lastTask.getTaskDuration();
+	this->jobDuration = lastTask.getTaskDuration() + lastTask.getEST();
 }
 
-void Job::calculateSlack(timeType longestJobDuration) {
-	this->slack = longestJobDuration - this->totalDuration;
+void Job::calculateSlackTime(timeType duration){
+    this->slackTime = duration - this->jobDuration;
 }
 
 
-//*** Operators *** //
+
+// *** Logic Operators ***:
 
 Job& Job::operator=(const Job &rhs) {
 	if (this != &rhs) {
-		this->totalDuration = rhs.totalDuration;
-		this->id = rhs.id;
-		this->slack = rhs.slack;
-		this->taskList = rhs.taskList;
+		this->jobID = rhs.jobID;
+        this->jobDuration = rhs.jobDuration;
+        this->slackTime = rhs.slackTime;
+        this->taskList = rhs.taskList;
 	}
 	return *this;
 }
 
 bool Job::operator<(const Job &rhs) const {
-	if (this->slack != rhs.slack) {
-		return this->slack < rhs.slack;
-	}
-	return this->id < rhs.id;
+    //Sort by slack time if not equal, else sort by jobID using the ternary operator:
+	return (this->slackTime != rhs.slackTime) ? this->slackTime < rhs.slackTime : this->jobID < rhs.jobID;
 }
 
-//*** Getters *** //
 
-unsigned short Job::getJobId() const{
-    return this->id;
-}
+// *** Getters and Setters ***:
 
-timeType Job::getJobDuration() const{
-    return this->totalDuration;
-}
-
-const std::vector<Task>& Job::getTasks() const{
-    return this->taskList;
-}
-
-bool Job::getJobDone(timeType currentTime){
-    for (const Task &t : taskList){
-        if(!t.getTaskDone(currentTime)){
-            return false;
-        }
-    }
-    return true;
-}
-
-bool Job::checkTaskProgress(timeType time){
-    for(const Task &t : taskList){
-        if(t.getTaskBusy(time)){
+bool Job::getTasksAvailable(){
+    for(const Task &task : this->taskList){
+        if(task.getTaskState() == NOT_STARTED){
             return true;
         }
     }
     return false;
 }
 
-bool Job::startNextTask(unsigned short currentTime) {
-
-	if (!this->getJobsAvailable()) {
-		return false;
-	}
-	if (this->getJobDone(currentTime)) {
-		return false;
-	}
-	Task &nextTask = this->getNextTask();
-	if (nextTask.getTaskStarted()) {
-		return false;
-	}
-	nextTask.startTask(currentTime);
-	return true;
+bool Job::getJobDone(timeType &currentTime){
+    for(const Task &task : this->taskList){
+        if(task.getTaskState() != DONE){
+            return false;
+        }
+    }
+    return true;
 }
 
-/*
 Task& Job::getNextTask(){
-    sortTasksByID(); //Always do this to avoid problems.
-
-    // Find the first task that has not started
-    auto next = std::find_if(taskList.begin(), taskList.end(), [](const Task &t) {
-        return !t.getTaskStarted();
-    });
-
-    // Return the found task if any, otherwise return the last task using the ternary operator
-    return (next != taskList.end()) ? *next : taskList.back();
-}
-*/
-
-
-Task& Job::getNextTask() {
-	// sort the tasks so I will get the actual first task
-	this->sortTasksByID();
-	auto taskDone = [](const Task &t) {
+    this->sortTasksByID(); //Might not be needed
+    auto taskDone = [](const Task &t) {
 		return !t.getTaskStarted();
 	};
 	auto next = std::find_if(taskList.begin(), taskList.end(), taskDone);
@@ -159,34 +120,27 @@ Task& Job::getNextTask() {
 	if (next != taskList.end()) {
 		return *next;
 	}
-
-	return taskList[taskList.size() - 1];
-}
-
-
-bool Job::getJobsAvailable() {
-    for (const Task &currentTask : taskList) {
-        if (currentTask.getTaskStarted()) {
-            return false;
-        }
+    else {
+        std::cout << "No task found." << std::endl;
+        // return *taskList.end(); //This leads to undefined behavior
+        return taskList.back();
     }
-    return true;
 }
 
-//*** Stream Operator: *** //
-
-std::ostream& operator<<(std::ostream &os, const Job &job){
-    os << "Job ID:" << job.getJobId();
-    os << " Duration: " << job.getJobDuration();
-
-    for(const Task &t : job.getTasks()){
-        os << t;
+// Might need this if there are problems with getting the next task
+/*
+std::optional<Task> Job::getNextTask(){
+    this->sortTasksByID();
+    auto taskDone = [](const Task &t) {
+        return !t.getTaskStarted();
+    };
+    auto next = std::find_if(taskList.begin(), taskList.end(), taskDone);
+    // if there is a task found that task can be returned
+    if (next != taskList.end()) {
+        return *next;
     }
-
-	return os;
+    else {
+        return std::nullopt;
+    }
 }
-
-void Job::printJobDetails() const {
-	std::cout << this->getJobId() << "\t" << taskList.front().getStartTime() 
-    << "\t" << taskList.back().getEndTime() << std::endl;
-}
+*/

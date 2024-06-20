@@ -6,6 +6,8 @@
 
 typedef unsigned long long timeType;
 
+enum taskState {NOT_STARTED, STARTED, DONE};
+
 class Task {
 private:
 	timeType taskId;
@@ -14,6 +16,8 @@ private:
 	timeType EST; //Earliest Start Time
 	timeType startTime;
 	timeType endTime;
+	taskState state;
+
 
 public:
 	Task();
@@ -33,13 +37,13 @@ public:
 	timeType getEST() const;
 	timeType getStartTime() const;
 	timeType getEndTime() const;
+	taskState getTaskState() const;
+	bool getTaskStarted() const;
 
-	//Dit kan beter
-    bool getTaskStarted() const;
-    bool getTaskBusy(unsigned short currentTime) const;
-    bool getTaskDone(unsigned short currentTime) const;
+	// Setters:
     void setEST(timeType newEST);
 	
+	// Other Functions:
     void startTask(unsigned short startTime);
 };
 

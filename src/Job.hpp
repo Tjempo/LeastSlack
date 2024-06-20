@@ -1,50 +1,43 @@
 #ifndef JOB_HPP_
 #define JOB_HPP_
 
-typedef unsigned long long int timeType;
-
-#include "Task.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include "Task.hpp"
 
-class Job{
-
-private:
-    unsigned short id;
-
-    timeType totalDuration;
-    timeType slack;
-
-	std::vector<Task> taskList;
-	std::vector<Task> finishedTasks;
-
+class Job
+{
 public:
-    Job() = delete;
-    Job(unsigned short, const std::vector<unsigned short> &Config);
+    Job(/* no args */);
+    Job(unsigned short id, const std::vector<unsigned short> &config);
     ~Job();
 
+    // *** Functions ***:
     void sortTasksByID();
 
-    timeType calculateEST(Task &t);
-    void calculateEST(timeType currentTime);
-    void calculateTotalJobDuration();
-    void calculateSlack(timeType longestJobDuration);
+    //*** Calculations ***:
+    void calculateEST(timeType &currentTime);
+    timeType calculateEST(const Task &t); //Overload, might combine together
 
-    bool operator<(const Job &rhs) const;
-    Job &operator=(const Job &rhs);
+    void calculateJobDuration();
+    void calculateSlackTime(timeType duration);
 
-    unsigned short getJobId() const;
-    timeType getJobDuration() const;
-    const std::vector<Task> &getTasks() const;
-    bool getJobDone(timeType currentTime);
-    bool checkTaskProgress(timeType time);
-    bool startNextTask(unsigned short currentTime);
-    Task &getNextTask();
-    bool getJobsAvailable();
-    void printJobDetails() const;
+    // *** Operators ***:
+	Job& operator=(const Job &rhs);
+	bool operator<(const Job &rhs) const;
+
+    // *** Getters and Setters ***:
+    bool getTasksAvailable();
+    bool getJobDone(timeType &currentTime);
+    Task& getNextTask();
+    // std::optional<Task> getNextTask();
+
+private:
+    unsigned short jobID;
+    timeType jobDuration;
+    timeType slackTime;
+    std::vector<Task> taskList;
 };
 
-std::ostream& operator <<(std::ostream &os, const Job &job);
-
-#endif // JOB_HPP_
+#endif /* JOB_HPP_ */

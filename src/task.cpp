@@ -23,7 +23,6 @@ Task::~Task() {
 
 // *** Logic Operators ***:
 
-
 // Less Than Operator:
 bool Task::operator<(const Task &RHS) const {
 	return this->taskId < RHS.taskId;
@@ -38,6 +37,7 @@ Task& Task::operator=(const Task &RHS) {
 		EST = RHS.EST;
 		startTime = RHS.startTime;
 		endTime = RHS.endTime;
+		state = RHS.state;
 	}
 	return *this;
 }
@@ -74,28 +74,19 @@ timeType Task::getEndTime() const {
 	return this->endTime;
 }
 
-bool Task::getTaskStarted() const {
-	return startTime != endTime;
+taskState Task::getTaskState() const {
+	return this->state;
 }
 
-bool Task::getTaskBusy(unsigned short currentTime) const {
-	if (!this->getTaskStarted()) {
-		return false;
-	}
-	return currentTime >= startTime && currentTime < endTime;
+bool Task::getTaskStarted() const { //might not be needed
+	return this->state == STARTED;
 }
 
-bool Task::getTaskDone(unsigned short currentTime) const {
-	if (!this->getTaskStarted()) {
-		return false;
-	}
-	return currentTime >= endTime;
-}
+//*** Setters ***
 
 void Task::setEST(timeType newEST) {
 	this->EST = newEST;
 }
-
 
 //*** Functions: ***
 
@@ -113,5 +104,6 @@ std::ostream& operator<<(std::ostream &os, const Task &t) {
 	os << " EST: " << t.getEST();
 	os << " Start Time: " << t.getStartTime();
 	os << " End Time: " << t.getEndTime() << std::endl;
+	os << " Task State: " << t.getTaskState() << std::endl;
 	return os;
 }

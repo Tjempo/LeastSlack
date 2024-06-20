@@ -1,8 +1,6 @@
 #include "Config.hpp"
 
-
 //*** Constructors & Destructor ***//
-
 
 Config::Config(/* args */){
 }
@@ -20,7 +18,6 @@ void Config::readConfig(const std::string &fileName) {
 
 
 void Config::readFirstLine(const std::string &fileName) {
-	// Open file with exception handling:
 	std::ifstream inputFile(fileName);
 	if (!inputFile) {
 		throw std::runtime_error("Error opening file: " + fileName + +"\n" + "Check if it exists");

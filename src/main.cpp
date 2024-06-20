@@ -2,7 +2,7 @@
 #include <filesystem>
 
 #include "Config.hpp"
-#include "JobShop.hpp"
+// #include "JobShop.hpp"
 
 //Main function:
 int main(int argc, char **argv) {
@@ -26,9 +26,11 @@ int main(int argc, char **argv) {
 		conf.readConfig(argv[1]);
 
 		//Run the program:
+		/*
 		JobShop JS(conf);
 		JS.run();
-		
+		*/
+
 		return 0;
 	}
     catch (const std::exception &e) {
