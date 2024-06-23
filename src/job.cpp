@@ -7,7 +7,6 @@ Job::Job(): jobID(0), jobDuration(0), slackTime(0){
 }
 
 Job::Job(unsigned short id, const std::vector<unsigned short> &config): jobID(id), jobDuration(0), slackTime(0){
-    std::cout << "Job created with args." << std::endl;
     for(unsigned short i = 0; i < config.size(); i+=2){
         taskList.push_back(Task(i / 2, config[i], config[i + 1]));
     }
@@ -61,7 +60,7 @@ timeType Job::calculateEST(const Task &t) {
 
 
 void Job::calculateJobDuration() {
-	this->sortTasksByID();
+	this->sortTasksByID(); //Might not be needed
 	Task lastTask = taskList.back();
 	this->jobDuration = lastTask.getTaskDuration() + lastTask.getEST();
 }
@@ -92,6 +91,23 @@ bool Job::operator<(const Job &rhs) const {
 
 // *** Getters and Setters ***:
 
+unsigned short Job::getJobID() const{
+    return this->jobID;
+}
+
+timeType Job::getJobDuration() const{
+    return this->jobDuration;
+}
+
+timeType Job::getSlackTime() const{
+    return this->slackTime;
+}
+
+const std::vector<Task>& Job::getTaskList() const {
+    return this->taskList;
+}
+
+
 bool Job::getTasksAvailable(){
     for(const Task &task : this->taskList){
         if(task.getTaskState() == NOT_STARTED){
@@ -101,7 +117,7 @@ bool Job::getTasksAvailable(){
     return false;
 }
 
-bool Job::getJobDone(timeType &currentTime){
+bool Job::getJobDone(){
     for(const Task &task : this->taskList){
         if(task.getTaskState() != DONE){
             return false;
@@ -127,20 +143,20 @@ Task& Job::getNextTask(){
     }
 }
 
-// Might need this if there are problems with getting the next task
-/*
-std::optional<Task> Job::getNextTask(){
-    this->sortTasksByID();
-    auto taskDone = [](const Task &t) {
-        return !t.getTaskStarted();
-    };
-    auto next = std::find_if(taskList.begin(), taskList.end(), taskDone);
-    // if there is a task found that task can be returned
-    if (next != taskList.end()) {
-        return *next;
+
+//*** Stream operator ***//
+std::ostream& operator<<(std::ostream &os, const Job &job){ // Change the return type to std::ostream&
+    os << "Job ID: " << job.getJobID() << std::endl;
+    os << "Job Duration: " << job.getJobDuration() << std::endl;
+    os << "Slack Time: " << job.getSlackTime() << std::endl;
+    os << "Tasks:" << std::endl;
+    for(const Task &task : job.getTaskList()){
+        os << task << std::endl;
     }
-    else {
-        return std::nullopt;
-    }
+    return os;
 }
-*/
+
+
+void Job::printJobDetails() const {
+	std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() << std::endl;
+}

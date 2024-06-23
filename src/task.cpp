@@ -2,17 +2,17 @@
 
 //*** Constructor and Destructor ***
 
-Task::Task() : taskId(0), machineNumber(0), duration(0), EST(0), startTime(0), endTime(0) {
+Task::Task() : taskId(0), machineNumber(0), duration(0), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
-Task::Task(timeType id, timeType machineNr, timeType dur) : taskId(id), machineNumber(machineNr), duration(dur), EST(0), startTime(0), endTime(0) {
+Task::Task(timeType id, timeType machineNr, timeType dur) : taskId(id), machineNumber(machineNr), duration(dur), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 
 }
 
 //Copy constructor
 Task::Task(const Task &RHS) :
 	taskId(RHS.taskId), machineNumber(RHS.machineNumber), duration(RHS.duration),EST(RHS.EST), 
-	startTime(RHS.startTime), endTime(RHS.endTime) {
+	startTime(RHS.startTime), endTime(RHS.endTime), state(RHS.state) {
 }
 
 // Destructor

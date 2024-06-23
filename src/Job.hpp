@@ -28,10 +28,16 @@ public:
 	bool operator<(const Job &rhs) const;
 
     // *** Getters and Setters ***:
+    unsigned short getJobID() const;
+    timeType getJobDuration() const;
+    timeType getSlackTime() const;
+    const std::vector<Task>& getTaskList() const;
+
     bool getTasksAvailable();
-    bool getJobDone(timeType &currentTime);
+    bool getJobDone();
     Task& getNextTask();
-    // std::optional<Task> getNextTask();
+
+    void printJobDetails() const;
 
 private:
     unsigned short jobID;
@@ -39,5 +45,8 @@ private:
     timeType slackTime;
     std::vector<Task> taskList;
 };
+
+std::ostream& operator<<(std::ostream &os, const Job &job);
+
 
 #endif /* JOB_HPP_ */
