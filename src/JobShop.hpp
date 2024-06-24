@@ -49,6 +49,7 @@ private:
 
     //*** Functions ***//
     void initialize(const std::vector<std::vector<unsigned short>> &config);
+    void checkJobProgress();
 };
 
 #endif // JOBSHOP_HPP

@@ -5,7 +5,8 @@
 JobShop::JobShop(const Config &conf): amountOfMachines(conf.getAmountOfMachines()), amountOfJobs(conf.getAmountOfJobs()), currentTime(0){
     std::cout << "JobShop created with " << this->amountOfMachines << " machines and " << this->amountOfJobs << " jobs." << std::endl;
     this->initialize(conf.getConfigVector());
-    this->machineInUseUntil.reserve(amountOfMachines); //Reserve memory for the machinesInUseUntil vector
+    this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
+
 
 }
 
@@ -15,7 +16,8 @@ JobShop::JobShop(unsigned short machines, unsigned short jobs, const std::vector
     for(auto &job : jobsList){
         std::cout << job << std::endl;
     }
-    this->machineInUseUntil.reserve(amountOfMachines); //Reserve memory for the machinesInUseUntil vector: 
+    this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
+
 }
 
 JobShop::~JobShop(){} //Now I am become Destructor, the destroyer of Jobshop.
@@ -30,58 +32,113 @@ void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config)
 	}
 }
 
-//*** Scheduling ***//
-
-//please work...
-void JobShop::run(){
-    //Print the jobs:
-    this->calculateSlackTime();
-
-    for(Job &job : this->jobList){
-        // job.calculateEST(currentTime); // <--- Belangrijk om te doen voor calculateJobDuration
-        // job.calculateJobDuration();
-        std::cout << job << std::endl;
-    }
-
-    
-    //sortJobsBySlack();
-
-    /* while (!this->allJobsDone()){
-        for(Job &job : this->jobList){
-            const Task &currentTask = job.getNextTask();
-            if(currentTask.getEST() <= currentTime){
-                //Check if the machine is available:
-                if(this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime){
-                    //Start the task:
-                    currentTask.startTask(currentTime);
-                    //Update the machineInUseUntil vector:
-                    this->machineInUseUntil[currentTask.getMachineNumber()] = currentTask.getEndTime();
-                }
+void JobShop::checkJobProgress() {
+    for (Job &job : this->jobList) {
+        for (Task &task : job.getTaskList()) {
+            if (task.getTaskState() == STARTED && task.getEndTime() <= this->currentTime) {
+                task.setTaskDone(); // Mark the task as done when end time is reached
             }
         }
     }
-    */
-    
-    //printResults();
 }
+
+
+
+//*** Scheduling ***//
+
+//please work...
+// Assuming Task class has a method setDone() to mark the task as done
+// and a method isDone() to check if the task is done.
+
+void JobShop::run() {
+    while (!this->allJobsDone()) {
+        this->checkJobProgress(); // Check and update task states
+        this->calculateSlackTime();
+        this->sortJobsBySlack();
+
+        for (Job &job : this->jobList) {
+            if (!job.getTasksAvailable() || !job.isPreviousTaskDone(job.getNextTask())) {
+                continue; // Skip if no tasks available or previous task is not done
+            }
+
+            Task &currentTask = job.getNextTask();
+
+            if (currentTask.getEST() <= currentTime) {
+                if (this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime) {
+                    // Start task
+                    currentTask.startTask(currentTime);
+                    this->machineInUseUntil[currentTask.getMachineNumber()] = currentTime + currentTask.getTaskDuration();
+                }
+            }
+        }
+
+        ++this->currentTime; // Update the currentTime
+
+        // Debugging output
+        for (Job &job : this->jobList) {
+            std::cout << "CurrentTime: " << this->currentTime << std::endl;
+            std::cout << job << std::endl;
+        }
+    }
+}
+
 
 
 
 //*** Calculations: ***//
 
+
 void JobShop::calculateSlackTime(){
-    for(Job &job : this->jobList){
-        Task &currentTask = job.getNextTask();
-        unsigned short machineNumber = currentTask.getMachineNumber();
-        if(machineInUseUntil[machineNumber] <= this->currentTime){
-            job.calculateEST(machineInUseUntil[machineNumber]);
-        }else{
-            job.calculateEST(this->currentTime);
-        }
-        job.calculateJobDuration();
-        job.calculateSlackTime(this->getLongestJobDuration());
-    }
+	for (Job &j : this->jobList) {
+		if (!j.getTasksAvailable())
+			continue;
+		Task &current = j.getNextTask();
+
+		unsigned short machineNr = current.getMachineNumber();
+		// tasks that use an already busy machine cannot be executed until it is free
+        std::cout << "MachineNr: " << machineNr << " In use until " << machineInUseUntil[machineNr] << std::endl;
+		if (machineInUseUntil[machineNr] > currentTime){
+			j.calculateEST(machineInUseUntil[machineNr]);
+		} else {
+			j.calculateEST(currentTime);
+		}
+		j.calculateJobDuration();
+	}
+	// making seperate variable so it isn't calcuted for every job
+	unsigned short longestJobDuration = this->getLongestJobDuration();
+	for (Job &j : this->jobList) {
+		j.calculateSlackTime(longestJobDuration);
+	}
 }
+
+
+
+// void JobShop::calculateSlackTime(){
+//     for (Job &j : this->jobList) {
+//         Task &currentTask = j.getNextTask();
+//         if (!j.getTasksAvailable() || !j.isPreviousTaskDone(currentTask))
+//             continue; // Skip this job if no tasks are available or the previous task isn't done
+
+//         unsigned short machineNr = currentTask.getMachineNumber();
+
+//         // Check if the machine is in use and adjust the EST accordingly
+//         if (machineInUseUntil[machineNr] > currentTime){
+//             j.calculateEST(machineInUseUntil[machineNr]);
+//         } else {
+//             j.calculateEST(currentTime);
+//         }
+
+//         j.calculateJobDuration();
+//     }
+
+//     // Calculate slack time as before
+//     timeType longestJobDuration = this->getLongestJobDuration();
+//     for (Job &j : this->jobList) {
+//         j.calculateSlackTime(longestJobDuration);
+//     }
+// }
+
+
 
 //*** Sorting ***//
 

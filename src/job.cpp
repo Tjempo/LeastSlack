@@ -31,6 +31,10 @@ void Job::calculateEST(timeType &currentTime){
     this->sortTasksByID();
     auto& nextTask = this->getNextTask();
 
+    if(nextTask.getTaskState() == DONE || nextTask.getTaskState() == STARTED){
+        return;
+    }
+
     auto next = std::find(taskList.begin(), taskList.end(), nextTask);
 	if (next == taskList.end()){
 		return;
@@ -88,6 +92,11 @@ bool Job::operator<(const Job &rhs) const {
 	return (this->slackTime != rhs.slackTime) ? this->slackTime < rhs.slackTime : this->jobID < rhs.jobID;
 }
 
+bool Job::operator>(const Job &rhs) const {
+    //Sort by slack time if not equal, else sort by jobID using the ternary operator:
+	return (this->slackTime != rhs.slackTime) ? this->slackTime > rhs.slackTime : this->jobID > rhs.jobID;
+}
+
 
 // *** Getters and Setters ***:
 
@@ -103,7 +112,13 @@ timeType Job::getSlackTime() const{
     return this->slackTime;
 }
 
-const std::vector<Task>& Job::getTaskList() const {
+
+const std::vector<Task>& Job::getTaskList() const{
+    return this->taskList;
+}
+
+//Dit is ook helemaal beun... Anders werkt de stream operator niet
+std::vector<Task>& Job::getTaskList(){
     return this->taskList;
 }
 
@@ -126,11 +141,22 @@ bool Job::getJobDone(){
     return true;
 }
 
+
+bool Job::getJobStarted(){
+    for(const Task &task : this->taskList){
+        if(task.getTaskState() != STARTED){
+            return false;
+        }
+    }
+    return true;
+}
+
 Task& Job::getNextTask(){
     this->sortTasksByID(); //Might not be needed
     auto taskDone = [](const Task &t) {
 		return !t.getTaskStarted();
 	};
+
 	auto next = std::find_if(taskList.begin(), taskList.end(), taskDone);
 	// if there is a task found that task can be returned
 	if (next != taskList.end()) {
@@ -142,6 +168,27 @@ Task& Job::getNextTask(){
         return taskList.back();
     }
 }
+
+bool Job::isPreviousTaskDone(const Task &t) {
+    // If the task is the first task, return true
+    if(t.getTaskId() == 0){
+        return true;
+    }
+
+    // Find the task with ID one less than the given task
+    auto previousTaskIter = std::find_if(taskList.begin(), taskList.end(), [&t](const Task &task) {
+        return task.getTaskId() == t.getTaskId() - 1;
+    });
+
+    // If the previous task is not found, return false
+    if (previousTaskIter == taskList.end()) {
+        return false;
+    }
+
+    // Return true if the previous task state is DONE, false otherwise
+    return previousTaskIter->getTaskState() == DONE;
+}
+
 
 
 //*** Stream operator ***//

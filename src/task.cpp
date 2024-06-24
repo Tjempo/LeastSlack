@@ -88,11 +88,16 @@ void Task::setEST(timeType newEST) {
 	this->EST = newEST;
 }
 
+void Task::setTaskDone() {
+	this->state = DONE;
+}
+
 //*** Functions: ***
 
 void Task::startTask(unsigned short startTime) {
 	this->startTime = startTime;
 	this->endTime = startTime + this->duration;
+	this->state = STARTED;
 }
 
 //*** Stream Operator: ***

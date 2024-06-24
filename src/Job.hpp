@@ -26,16 +26,21 @@ public:
     // *** Operators ***:
 	Job& operator=(const Job &rhs);
 	bool operator<(const Job &rhs) const;
+    bool operator>(const Job &rhs) const;
 
     // *** Getters and Setters ***:
     unsigned short getJobID() const;
     timeType getJobDuration() const;
     timeType getSlackTime() const;
     const std::vector<Task>& getTaskList() const;
+    std::vector<Task>& getTaskList();
 
     bool getTasksAvailable();
     bool getJobDone();
-    Task& getNextTask();
+    bool getJobStarted();
+    Task &getNextTask();
+
+    bool isPreviousTaskDone(const Task &t);
 
     void printJobDetails() const;
 

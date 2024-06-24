@@ -32,6 +32,7 @@ public:
 
 	// Setters:
     void setEST(timeType newEST);
+	void setTaskDone();
 	
 	// Other Functions:
     void startTask(unsigned short startTime);
