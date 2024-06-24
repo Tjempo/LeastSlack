@@ -17,6 +17,22 @@ public:
     //*** Functions ***//
     void run();
 
+    //*** Calculations ***//
+    void calculateSlackTime();
+
+
+    //*** Scheduling ***//
+
+
+    //*** Sorting ***//
+
+    /// @brief Sorts the jobs by slack time. If the slack time is equal, the job with the longest duration will be first.
+    void sortJobsBySlack();
+    
+
+    //*** Getters ***//
+    bool allJobsDone();
+    timeType getLongestJobDuration();
 
     //*** Stream ***//
     void printResults();
@@ -27,6 +43,9 @@ private:
     unsigned short amountOfJobs;
     std::vector<Job> jobList;
 
+    std::vector<timeType> machineInUseUntil;
+
+    timeType currentTime;
 
     //*** Functions ***//
     void initialize(const std::vector<std::vector<unsigned short>> &config);

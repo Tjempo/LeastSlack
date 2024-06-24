@@ -9,16 +9,6 @@ typedef unsigned long long timeType;
 enum taskState {NOT_STARTED, STARTED, DONE};
 
 class Task {
-private:
-	timeType taskId;
-	timeType machineNumber;
-	timeType duration;
-	timeType EST; //Earliest Start Time
-	timeType startTime;
-	timeType endTime;
-	taskState state;
-
-
 public:
 	Task();
     Task(timeType id, timeType machineNr, timeType duration);
@@ -45,6 +35,15 @@ public:
 	
 	// Other Functions:
     void startTask(unsigned short startTime);
+	
+private:
+	timeType taskId;
+	timeType machineNumber;
+	timeType duration;
+	timeType EST; //Earliest Start Time
+	timeType startTime;
+	timeType endTime;
+	taskState state;
 };
 
 std::ostream& operator<<(std::ostream &os, const Task &t);

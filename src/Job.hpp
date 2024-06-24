@@ -44,6 +44,7 @@ private:
     timeType jobDuration;
     timeType slackTime;
     std::vector<Task> taskList;
+
 };
 
 std::ostream& operator<<(std::ostream &os, const Job &job);
