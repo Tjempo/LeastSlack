@@ -7,17 +7,16 @@
 #include "Config.hpp"
 #include "Job.hpp"
 
-class JobShop{
-public:
+class JobShop {
+   public:
     JobShop(/* no args */) = delete;
-    JobShop(const JobShop &other) = delete; //Copy constructor
-    JobShop(const Config &conf);
+    JobShop(const JobShop &other) = delete;  // Copy constructor
+    explicit JobShop(const Config &conf);
     JobShop(unsigned short machines, unsigned short jobs, const std::vector<Job> &jobsList);
     ~JobShop();
 
     //*** Calculations ***//
     void calculateSlackTime();
-
 
     //*** Scheduling ***//
     void run();
@@ -26,7 +25,6 @@ public:
 
     /// @brief Sorts the jobs by slack time. If the slack time is equal, the job with the longest duration will be first.
     void sortJobs();
-    
 
     //*** Getters ***//
     bool allJobsDone();
@@ -35,7 +33,7 @@ public:
     //*** Stream ***//
     void printResults();
 
-private:
+   private:
     //*** Variables ***//
     unsigned short amountOfMachines;
     unsigned short amountOfJobs;
@@ -50,4 +48,4 @@ private:
     void checkJobProgress();
 };
 
-#endif // JOBSHOP_HPP
+#endif  // JOBSHOP_HPP

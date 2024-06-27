@@ -2,27 +2,25 @@
 
 //*** Constructors & Destructor ***//
 
-JobShop::JobShop(const Config &conf): amountOfMachines(conf.getAmountOfMachines()), amountOfJobs(conf.getAmountOfJobs()), currentTime(0){
+JobShop::JobShop(const Config &conf) : amountOfMachines(conf.getAmountOfMachines()), amountOfJobs(conf.getAmountOfJobs()), currentTime(0) {
     this->initialize(conf.getConfigVector());
-    this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
+    this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
 }
 
-JobShop::JobShop(unsigned short machines, unsigned short jobs, const std::vector<Job> &jobsList): amountOfMachines(machines), amountOfJobs(jobs), currentTime(0){
-    (void)jobsList; //cast to void to avoid warning. I should just remove it, but im busy* (just lazy)
-    this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
-
+JobShop::JobShop(unsigned short machines, unsigned short jobs, const std::vector<Job> &jobsList) : amountOfMachines(machines), amountOfJobs(jobs), currentTime(0) {
+    (void)jobsList;                                       // cast to void to avoid warning. I should just remove it, but im busy* (just lazy)
+    this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
 }
 
-JobShop::~JobShop(){} //Now I am become Destructor, the destroyer of Jobshop.
-
+JobShop::~JobShop() {}  // Now I am become Destructor, the destroyer of Jobshop.
 
 //*** Functions ***//
-void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config){
-	unsigned short id = 0;
-	for (const std::vector<unsigned short> &job : config) {
-		this->jobList.emplace_back(Job(id, job));
-		++id;
-	}
+void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config) {
+    unsigned short id = 0;
+    for (const std::vector<unsigned short> &job : config) {
+        this->jobList.emplace_back(Job(id, job));
+        ++id;
+    }
 }
 
 void JobShop::checkJobProgress() {
@@ -35,13 +33,13 @@ void JobShop::checkJobProgress() {
 
 void JobShop::run() {
     while (!this->allJobsDone()) {
-        this->checkJobProgress(); // Check and update task states
+        this->checkJobProgress();  // Check and update task states
         this->calculateSlackTime();
         this->sortJobs();
 
         for (Job &job : this->jobList) {
             if (!job.getTasksAvailable() || !job.isPreviousTaskDone(job.getNextTask())) {
-                continue; // Skip if no tasks available or previous task is not done
+                continue;  // Skip if no tasks available or previous task is not done
             }
 
             Task &currentTask = job.getNextTask();
@@ -54,77 +52,74 @@ void JobShop::run() {
                 }
             }
         }
-		// Update the currentTime:
-        ++this->currentTime; 
+        // Update the currentTime:
+        ++this->currentTime;
     }
     this->printResults();
 }
 
-
 //*** Calculations: ***//
 
-void JobShop::calculateSlackTime(){
-	for (Job &job : this->jobList) {
-		if (!job.getTasksAvailable())
-			continue;
-		Task &current = job.getNextTask();
-		unsigned short machineNr = current.getMachineNumber();
+void JobShop::calculateSlackTime() {
+    for (Job &job : this->jobList) {
+        if (!job.getTasksAvailable())
+            continue;
+        Task &current = job.getNextTask();
+        unsigned short machineNr = current.getMachineNumber();
 
-		if (machineInUseUntil[machineNr] > currentTime){
-			job.calculateEST(machineInUseUntil[machineNr]);
-		} else {
-			job.calculateEST(currentTime);
-		}
-		job.calculateJobDuration();
-	}
+        if (machineInUseUntil[machineNr] > currentTime) {
+            job.calculateEST(machineInUseUntil[machineNr]);
+        } else {
+            job.calculateEST(currentTime);
+        }
+        job.calculateJobDuration();
+    }
 
-	unsigned short longestJobDuration = this->getLongestJobDuration();
-	// This is split into two loops to ensure that all jobs have their jobDuration calculated before calculating slack time.
-	for (Job &job : this->jobList) {
-		job.calculateSlackTime(longestJobDuration);
-	}
+    unsigned short longestJobDuration = this->getLongestJobDuration();
+    // This is split into two loops to ensure that all jobs have their jobDuration calculated before calculating slack time.
+    for (Job &job : this->jobList) {
+        job.calculateSlackTime(longestJobDuration);
+    }
 }
 
 //*** Sorting ***//
 
-void JobShop::sortJobs(){
-    std::sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2){
+void JobShop::sortJobs() {
+    std::sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2) {
         if (job1.getSlackTime() == job2.getSlackTime()) {
-            //Sort by jobID if slack time is equal.
-            return job1.getJobID() < job2.getJobID(); 
+            // Sort by jobID if slack time is equal.
+            return job1.getJobID() < job2.getJobID();
         }
         return job1.getSlackTime() < job2.getSlackTime();
     });
 }
 
-
 //*** Getters & Setters ***//
 
 bool JobShop::allJobsDone() {
-	for (Job &job : this->jobList) {
-		if (!job.getJobDone()) {
-			return false; // When a job is not completed, return false.
-		}
-	}
-	return true;
+    for (Job &job : this->jobList) {
+        if (!job.getJobDone()) {
+            return false;  // When a job is not completed, return false.
+        }
+    }
+    return true;
 }
 
 timeType JobShop::getLongestJobDuration() {
     auto maxDuration = [](const Job &LHS, const Job &RHS) {
-		return LHS.getJobDuration() < RHS.getJobDuration();
-	};
-	auto longestTask = std::max_element(jobList.begin(), jobList.end(), maxDuration);
-	return longestTask->getJobDuration();
+        return LHS.getJobDuration() < RHS.getJobDuration();
+    };
+    auto longestTask = std::max_element(jobList.begin(), jobList.end(), maxDuration);
+    return longestTask->getJobDuration();
 }
-
 
 //*** Stream operator (kinda) ***//
 
-void JobShop::printResults(){
-	std::sort(jobList.begin(), jobList.end(), [](const Job &job1, const Job &job2) {
-		return job1.getJobID() < job2.getJobID();
-	});
-	for (Job &job : jobList) {
-		job.printJobDetails();
-	}
+void JobShop::printResults() {
+    std::sort(jobList.begin(), jobList.end(), [](const Job &job1, const Job &job2) {
+        return job1.getJobID() < job2.getJobID();
+    });
+    for (Job &job : jobList) {
+        job.printJobDetails();
+    }
 }

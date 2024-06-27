@@ -5,14 +5,13 @@
 Task::Task() : taskId(0), machineNumber(0), duration(0), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
-Task::Task(timeType id, timeType machineNr, timeType dur) 
+Task::Task(timeType id, timeType machineNr, timeType dur)
     : taskId(id), machineNumber(machineNr), duration(dur), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
 // Copy constructor
-Task::Task(const Task &RHS) 
-    : taskId(RHS.taskId), machineNumber(RHS.machineNumber), duration(RHS.duration), EST(RHS.EST), 
-      startTime(RHS.startTime), endTime(RHS.endTime), state(RHS.state) {
+Task::Task(const Task &RHS)
+    : taskId(RHS.taskId), machineNumber(RHS.machineNumber), duration(RHS.duration), EST(RHS.EST), startTime(RHS.startTime), endTime(RHS.endTime), state(RHS.state) {
 }
 
 // Destructor
@@ -27,7 +26,7 @@ bool Task::operator<(const Task &RHS) const {
 }
 
 // Assignment Operator:
-Task& Task::operator=(const Task &RHS) {
+Task &Task::operator=(const Task &RHS) {
     if (this != &RHS) {
         taskId = RHS.taskId;
         machineNumber = RHS.machineNumber;
@@ -42,7 +41,7 @@ Task& Task::operator=(const Task &RHS) {
 
 // Equality Operator:
 bool Task::operator==(const Task &rhs) const {
-    return this->taskId == rhs.taskId; // Consider more attributes if needed
+    return this->taskId == rhs.taskId;  // Consider more attributes if needed
 }
 
 // *** Getters and Setters ***
@@ -75,10 +74,6 @@ taskState Task::getTaskState() const {
     return this->state;
 }
 
-bool Task::getTaskStarted() const {
-    return this->state == STARTED;
-}
-
 // *** Setters ***
 
 void Task::setEST(timeType newEST) {
@@ -99,7 +94,7 @@ void Task::startTask(unsigned short startTime) {
 
 // *** Stream Operator ***
 
-std::ostream& operator<<(std::ostream &os, const Task &t) {
+std::ostream &operator<<(std::ostream &os, const Task &t) {
     os << "Task Number: " << t.getTaskId();
     os << " On Machine: " << t.getMachineNumber();
     os << " Duration: " << t.getTaskDuration();

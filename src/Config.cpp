@@ -2,34 +2,29 @@
 
 //*** Constructors & Destructor ***//
 
-Config::Config(/* args */){
-}
+Config::Config(/* args */) : amountOfJobs(0), amountOfMachines(0) {}
 
-Config::~Config(){
+Config::~Config() {
 }
-
 
 //*** Methods ***//
 
 void Config::readConfig(const std::string &fileName) {
-	this->readFirstLine(fileName);
-	this->readTasks(fileName);
+    this->readFirstLine(fileName);
+    this->readTasks(fileName);
 }
-
 
 void Config::readFirstLine(const std::string &fileName) {
-	std::ifstream inputFile(fileName);
-	if (!inputFile) {
-		throw std::runtime_error("Error opening file: " + fileName + +"\n" + "Check if it exists");
-	}
+    std::ifstream inputFile(fileName);
+    if (!inputFile) {
+        throw std::runtime_error("Error opening file: " + fileName + +"\n" + "Check if it exists");
+    }
 
-	// Read first line and extract values:
-	inputFile >> this->amountOfJobs >> this->amountOfMachines;
-	// Close file:
-	inputFile.close();
+    // Read first line and extract values:
+    inputFile >> this->amountOfJobs >> this->amountOfMachines;
+    // Close file:
+    inputFile.close();
 }
-
-
 
 void Config::readTasks(const std::string &fileName) {
     std::ifstream inputFile(fileName);
@@ -71,26 +66,23 @@ void Config::readTasks(const std::string &fileName) {
     }
 }
 
-
-
 //*** Getters & Setters ***//
 
-unsigned short Config::getAmountOfJobs() const{
-	return this->amountOfJobs;
+unsigned short Config::getAmountOfJobs() const {
+    return this->amountOfJobs;
 }
 
-unsigned short Config::getAmountOfMachines() const{
-	return this->amountOfMachines;
+unsigned short Config::getAmountOfMachines() const {
+    return this->amountOfMachines;
 }
 
-const std::vector<std::vector<unsigned short>>& Config::getConfigVector() const {
-	return this->ConfigData;
+const std::vector<std::vector<unsigned short>> &Config::getConfigVector() const {
+    return this->ConfigData;
 }
-
 
 //*** Steam operator ***//
-std::ostream& operator<<(std::ostream &os, const Config &conf) {
-	os << "Amount of jobs: " << conf.getAmountOfJobs() << std::endl;
-	os << "Amount of machines: " << conf.getAmountOfMachines() << std::endl;
-	return os;
+std::ostream &operator<<(std::ostream &os, const Config &conf) {
+    os << "Amount of jobs: " << conf.getAmountOfJobs() << std::endl;
+    os << "Amount of machines: " << conf.getAmountOfMachines() << std::endl;
+    return os;
 }
