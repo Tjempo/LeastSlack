@@ -1,225 +1,195 @@
-#include "job.h"
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <algorithm>
-#include <memory>
+#include "Job.hpp"
 
-job::job(unsigned short ID, std::string jobString) :
-		jobID(ID), totalJobDuration(0) {
-	// Define & initialize variables
-	std::istringstream iss(jobString);
-	unsigned short machineID = 0;
-	unsigned short duration = 0;
-	unsigned short taskID = 0;
+//*** Constructor and Destructor ***
 
-	// Loop to read pairs of machineID and duration from jobString
-	while (iss >> machineID >> duration) {
-		taskList.push_back(task(++taskID, machineID, duration));
-	}
+Job::Job() : jobID(0), jobDuration(0), slackTime(0) {
+    // Job created with no args
 }
 
-job::job(const job &RHS) :
-    jobID(RHS.jobID), totalJobDuration(RHS.totalJobDuration) {
-    for (const task& task : RHS.taskList) {
-        this->taskList.push_back(task);
+Job::Job(unsigned short id, const std::vector<unsigned short> &config) : jobID(id), jobDuration(0), slackTime(0) {
+    for (unsigned short i = 0; i < config.size(); i += 2) {
+        taskList.push_back(Task(i / 2, config[i], config[i + 1]));
     }
 }
 
-
-job::~job() {
-	// Destructor stub
+Job::~Job() {
 }
 
-// Operators:
-job& job::operator=(const job &RHS) {
-    if (this == &RHS) {
-        return *this;
-    } else {
-        this->jobID = RHS.getJobID();
-        this->totalJobDuration = RHS.getTotalJobDuration();
-        this->taskList = RHS.taskList; // This involves copying
-        return *this;
-    }
+// *** Functions ***:
+void Job::sortTasksByID() {
+    std::sort(this->taskList.begin(), this->taskList.end());
 }
 
-
-bool job::operator<(const job &RHS) const {
-	if (this->getTotalJobDuration() < RHS.getTotalJobDuration()) {
-		return true;
-	}else if (this->getTotalJobDuration() == RHS.getTotalJobDuration()) {
-		if (this->getJobID() > RHS.getJobID()) {
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		return false;
-	}
-}
-
-bool job::operator>(const job &RHS) const {
-	if (this->getTotalJobDuration() > RHS.getTotalJobDuration()) {
-		return true;
-	} else if (this->getTotalJobDuration() == RHS.getTotalJobDuration()) {
-		if (this->getJobID() > RHS.getJobID()) {
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		return false;
-	}
-}
-
-// Functions
-
-void job::sortByTaskID(){
-	std::sort(this->taskList.begin(), this->taskList.end());
-}
-
-//Time Calculations:
-void job::calculateEST(unsigned long long time) {
-	if (getJobsAvailable()) {
-		sortByTaskID();
-
-		for (size_t i = 0; i < taskList.size(); ++i) {
-			task &currentTask = taskList[i];
-			unsigned long long EST = calculateEST(currentTask) + time;
-			currentTask.setEarliestStartTime(EST);
-		}
-	} else {
-//		std::cout << "No more jobs available" << std::endl;
-	}
-}
-
-unsigned long long job::calculateEST(const task &t) {
-	auto getPreviousTask = [&t](const task &ts) {
-		return ts.getTaskID() == (t.getTaskID() - 1);
-	};
-
-	// Find the previous task
-	auto previousTaskID = std::find_if(taskList.begin(), taskList.end(),getPreviousTask);
-	// If the previous task is not found, it means the current task is the first task
-
-	if (previousTaskID == taskList.end()) {
-		// If it is, it can start immediately
-		return 0;
-	}
-	// Calculate EST using predecessor's earliest start time and duration
-	return (previousTaskID->getEarliestStartTime() + previousTaskID->getDuration());
-}
-
-//Calculate Duration:
-
-void job::calculateTotalDuration() {
-	sortByTaskID();
-	//Dan pakken we het laatste item in de taskList
-	auto previousTask = std::prev(taskList.end());
-	this->totalJobDuration = (previousTask->getDuration() + previousTask->getEarliestStartTime());
-}
-
-bool job::isJobDone() {
-	for (task &currentTask : taskList) {
-		//Count amount of unfinished tasks:
-		if (currentTask.getCurrentState() != COMPLETED) {
-			return false;
-		}
-	}
-	return true;
-}
-
-// Getters 
-
-bool job::getJobsAvailable() {
-    for (const task &currentTask : taskList) {
-        std::cout << "Current Task: "  << currentTask.getTaskID() << " " << currentTask.getCurrentState() << std::endl;
-        if (currentTask.getCurrentState() != NOT_COMPLETED) {
-            return false;
+void Job::checkTaskProgress(const timeType &currentTime) {
+    for (Task &task : this->taskList) {
+        if (task.getTaskState() == STARTED && task.getEndTime() <= currentTime) {
+            task.setTaskDone();
         }
     }
-    return true;
 }
 
+//*** Calculations *** //
 
-const task& job::getTask(unsigned short index) const {
-    return this->taskList.at(index);
-}
+void Job::calculateEST(timeType &currentTime) {
+    if (!getTasksAvailable()) {
+        return;
+    }
+    this->sortTasksByID();
+    auto &nextTask = this->getNextTask();
 
-
-//Ik denk dat het hier niet goed gaat:
-task& job::getNextTask() {
-    sortByTaskID();
-
-    for (unsigned short i = 0; i < taskList.size(); ++i) {
-        if (taskList[i].getCurrentState() != COMPLETED) {
-            return taskList[i];
-        }
+    if (nextTask.getTaskState() == DONE || nextTask.getTaskState() == STARTED) {
+        return;
     }
 
-    // If all tasks are completed, return the first task (the one with the lowest task ID)
-    // Assuming that a job always has at least one task
-    // If a job might have no tasks, you should handle that case separately
-    // (e.g., throw an exception or return a special value)
-    //std::cout << "job::getNextTask - end" << std::endl;
-    return taskList.front();
+    auto next = std::find(taskList.begin(), taskList.end(), nextTask);
+    if (next == taskList.end()) {
+        return;
+    }
+
+    for (auto it = next; it != taskList.end(); it++) {
+        if (it == next || it->getTaskId() == 0) {
+            it->setEST(currentTime);
+        } else {
+            it->setEST(calculateEST(*it));
+        }
+    }
 }
 
-
-void job::checkTaskProgress(unsigned long long time) {
-	for (task &task : taskList) {
-		if (task.getCurrentState() == IN_PROGRESS) {
-			// std::cout << "Found task with in progress" << std::endl;
-			// std::cout << "StartTime: " << task.getStartTime() << std::endl;
-			// std::cout << "Duration: " << task.getDuration() << std::endl;
-			// std::cout << "Current Time: " << time << std::endl;
-
-			if (task.getStartTime() + task.getDuration() == time) {
-//				std::cout << "I finished a task! "<< getJobID() << std::endl;
-//				std::cout << "TaskID = " << task.getTaskID() << std::endl;
-//				std::cout << "with machinenumber: " << task.getMachineNumber()<< std::endl;
-				task.finishTask(time);
-			}
-		}
-	}
+timeType Job::calculateEST(const Task &t) {
+    auto getPreviousTask = [&t](const Task &ts) {
+        return ts.getTaskId() == (t.getTaskId() - 1);
+    };
+    // If the previous task is not found, it means the current task is the first task
+    auto previousTaskID = std::find_if(taskList.begin(), taskList.end(), getPreviousTask);
+    if (previousTaskID == taskList.end()) {
+        // If it is, it can start immediately, so return 0:
+        return 0;
+    }
+    return (previousTaskID->getEST() + previousTaskID->getTaskDuration());  // else
 }
 
-// getJobID:
-unsigned short job::getJobID() const {
-	return this->jobID;
+void Job::calculateJobDuration() {
+    this->sortTasksByID();
+    Task lastTask = taskList.back();
+    this->jobDuration = lastTask.getTaskDuration() + lastTask.getEST();
 }
 
-// getTotalJobDuration:
-
-unsigned long long job::getTotalJobDuration() const {
-	return this->totalJobDuration;
+void Job::calculateSlackTime(timeType duration) {
+    this->slackTime = duration - this->jobDuration;
 }
 
-void job::printJobDetails() const {
-	std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t"
-			<< taskList.back().getEndTime() << std::endl;
+// *** Logic Operators ***:
+
+Job &Job::operator=(const Job &rhs) {
+    if (this != &rhs) {
+        this->jobID = rhs.jobID;
+        this->jobDuration = rhs.jobDuration;
+        this->slackTime = rhs.slackTime;
+        this->taskList = rhs.taskList;
+    }
+    return *this;
 }
 
-std::ostream& operator<<(std::ostream &os, const job &RHS) {
-
-	os << "| Job ID: ";
-	os << RHS.getJobID();
-	os << " | Duration: ";
-	os << RHS.getTotalJobDuration();
-	os << " |";
-	os << std::endl;
-	return os;
+bool Job::operator<(const Job &rhs) const {
+    // Sort by slack time if not equal, else sort by jobID using the ternary operator:
+    return (this->slackTime != rhs.slackTime) ? this->slackTime < rhs.slackTime : this->jobID < rhs.jobID;
 }
 
-bool job::hasActiveTasks() const {
-    for (const task &currentTask : taskList) {
-        if (currentTask.getCurrentState() == IN_PROGRESS) {
+bool Job::operator>(const Job &rhs) const {
+    // Sort by slack time if not equal, else sort by jobID using the ternary operator:
+    return (this->slackTime != rhs.slackTime) ? this->slackTime > rhs.slackTime : this->jobID > rhs.jobID;
+}
+
+// *** Getters and Setters ***:
+
+unsigned short Job::getJobID() const {
+    return this->jobID;
+}
+
+timeType Job::getJobDuration() const {
+    return this->jobDuration;
+}
+
+timeType Job::getSlackTime() const {
+    return this->slackTime;
+}
+
+const std::vector<Task> &Job::getTaskList() const {
+    return this->taskList;
+}
+
+// Dit is ook helemaal beun... Anders werkt de stream operator niet
+std::vector<Task> &Job::getTaskList() {
+    return this->taskList;
+}
+
+bool Job::getTasksAvailable() {
+    for (const Task &task : this->taskList) {
+        if (task.getTaskState() == NOT_STARTED) {
             return true;
         }
     }
     return false;
 }
 
-std::vector<task>& job::getTaskList() {
-    return this->taskList;
+bool Job::getJobDone() {
+    for (const Task &task : this->taskList) {
+        if (task.getTaskState() != DONE) {
+            return false;
+        }
+    }
+    return true;
+}
+
+Task &Job::getNextTask() {
+    this->sortTasksByID();  // Might not be needed
+    auto taskDone = [](const Task &t) {
+        return t.getTaskState() == NOT_STARTED;
+    };
+
+    auto next = std::find_if(taskList.begin(), taskList.end(), taskDone);
+    // if there is a task found that task can be returned
+    if (next != taskList.end()) {
+        return *next;
+    } else {
+        // This should never happen
+        std::cerr << "No task found. The output will likely be wrong" << std::endl;
+        return taskList.back();
+    }
+}
+
+bool Job::isPreviousTaskDone(const Task &t) {
+    // If the task is the first task, return true
+    if (t.getTaskId() == 0) {
+        return true;
+    }
+
+    // Find the task with ID one less than the given task
+    auto previousTaskIter = std::find_if(taskList.begin(), taskList.end(), [&t](const Task &task) {
+        return task.getTaskId() == t.getTaskId() - 1;
+    });
+
+    // If the previous task is not found, return false
+    if (previousTaskIter == taskList.end()) {
+        return false;
+    }
+
+    return previousTaskIter->getTaskState() == DONE;
+}
+
+//*** Stream operator ***//
+std::ostream &operator<<(std::ostream &os, const Job &job) {
+    os << "Job ID: " << job.getJobID() << std::endl;
+    os << "Job Duration: " << job.getJobDuration() << std::endl;
+    os << "Slack Time: " << job.getSlackTime() << std::endl;
+    os << "Tasks:" << std::endl;
+    for (const Task &task : job.getTaskList()) {
+        os << task << std::endl;
+    }
+    return os;
+}
+
+// *** Not used in the current implementation ***//
+void Job::printJobDetails() const {
+    std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() << std::endl;
 }

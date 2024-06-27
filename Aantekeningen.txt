@@ -1,0 +1,34 @@
+- Misschien ipv over al een typedef een global.cpp waar timeUnit wordt genoteerd? 
+
+- Task state enum ipv een bool
+
+
+- Path 
+cd /c/Users/timoh/Documents/Code/C++/LeastSlack
+
+- Compile met 
+g++ -o LeastSlack $(find . -name '*.cpp' -or -name '*.hpp') -std=c++17 -Wall -Wextra
+
+
+- Compile met -O2 voor betere optimization during compilation
+g++ -o LeastSlack $(find . -name '*.cpp' -or -name '*.hpp') -std=c++17 -Wall -Wextra -O2
+
+
+
+void Job::calculateDuration() {
+    // Sort tasks by their ID
+    this->sortTasksByID();
+
+    // Check if taskList is empty to prevent undefined behavior
+    if (!taskList.empty()) {
+        // Get the last task
+        Task& lastTask = taskList.back();
+        
+        // Calculate job duration
+        this->jobDuration = lastTask.getTaskDuration() + lastTask.getEST();
+    } else {
+        // Handle the case where there are no tasks
+        this->jobDuration = 0; // Or handle as appropriate for your application
+        throw std::runtime_error("taskList is empty, cannot calculate duration");
+    }
+}

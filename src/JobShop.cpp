@@ -1,197 +1,125 @@
-#include "JobShop.h"
-#include <iostream>
-#include <algorithm>
-#include <fstream>
-#include <sstream>
+#include "JobShop.hpp"
 
-/*
- JobShop::JobShop() :
- nAmountOfTasks(0), nAmountOfMachines(0), time(0) {
- for (int i = 0; i < 0; ++i) {
- this->machineState.push_back(false);
- }
- //Empty :O
- }
- */
-JobShop::JobShop(const std::string &filePath) :
-		currentTime(0) {
-	this->readFile(filePath);
+//*** Constructors & Destructor ***//
+
+JobShop::JobShop(const Config &conf) : amountOfMachines(conf.getAmountOfMachines()), amountOfJobs(conf.getAmountOfJobs()), currentTime(0) {
+    this->initialize(conf.getConfigVector());
+    this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
 }
 
-JobShop::~JobShop() {
-	// Destructor stub
+JobShop::JobShop(unsigned short machines, unsigned short jobs, const std::vector<Job> &jobsList) : amountOfMachines(machines), amountOfJobs(jobs), currentTime(0) {
+    (void)jobsList;                                       // cast to void to avoid warning. I should just remove it, but im busy* (just lazy)
+    this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
 }
 
-void JobShop::readFile(const std::string &fileName) {
-	readFirstLine(fileName);
-	readTasks(fileName);
-}
+JobShop::~JobShop() {}  // Now I am become Destructor, the destroyer of Jobshop.
 
-void JobShop::readFirstLine(const std::string &fileName) {
-	// Open file with exception handling:
-	//std::cout << "FileName: " << fileName << std::endl;
-
-	std::ifstream inputFile(fileName);
-	if (!inputFile) {
-		throw std::runtime_error(
-				"Error opening file: " + fileName + +"\n"
-						+ "Check if it exists");
-	}
-
-	// Read first line and extract values:
-	unsigned short tasks, machines;
-	inputFile >> tasks >> machines;
-
-	//Store Values:
-	for (int i = 0; i < machines; ++i) {
-		this->machineInUseUntil.push_back(0);
-	}
-
-	this->nAmountOfMachines = machines;
-	this->nAmountOfTasks = tasks;
-
-	// Close file:
-	inputFile.close();
-}
-
-void JobShop::readTasks(const std::string &fileName) {
-	std::ifstream inputFile(fileName);
-
-	if (!inputFile) {
-		throw std::runtime_error(
-			"Error opening file: " + fileName + "\n" + "Check if it exists");
-	}
-
-	std::string line;
-
-	// Skip the first line
-	if (!std::getline(inputFile, line)) {
-		throw std::runtime_error(
-				"Error reading the first line from the file: " + fileName);
-	}
-
-	unsigned short jobID = 0;
-	// Read and store the remaining lines
-	while (std::getline(inputFile, line)) {
-		jobs.push_back(job(jobID, line));
-		jobID++;
-	}
-
-	// Close the file
-	inputFile.close();
-}
-
-void JobShop::schedule() {
-	/*ToDo:
-	 - Bereken Slack < Klaar hoop ik
-	 - Bereken total duration < Klaar
-	 - Bereken EST (Earliest Start Time) < Klaar
-
-	 - Sorteer task op basis van slack
-	 - Start taak met laagste slack
-	 - {Als taak gelijke slack heeft op basis van ID sorteren}
-	 - Zet taak naar {in progress}
-	 */
-
-	while (!allJobsDone()) {
-		calculateSlack(currentTime);
-
-		checkJobProgress();
-
-		taskActivationManager();
-
-		++currentTime;
-
-		//std::cout << "Current time is: " << currentTime << std::endl;
-	}
-
-	printJobResults();
-	//std::cout << "##### All Jobs Completed #####" << std::endl;
-
-}
-
-void JobShop::calculateSlack(unsigned long long &time) {
-	for (job &job : jobs) {
-		job.calculateEST(time);
-		job.calculateTotalDuration();
-	}
-}
-
-bool JobShop::allJobsDone() {
-	for (job &job : jobs) {
-		if (job.isJobDone() == false) {
-			return false; // When a job is not completed, return false right away
-		}
-	}
-	return true;
-}
-
-void JobShop::orderJobsByTotalDuration() {
-	std::sort(jobs.begin(), jobs.end(), [](const job &job1, const job &job2) {
-		return job1 > job2;
-	});
-}
-
-void JobShop::checkJobProgress() {
-	for (job &job : jobs) {
-		job.checkTaskProgress(currentTime);
-	}
-}
-
-//void JobShop::deactivateMachine(unsigned short index) {
-//	machineInUseUntil[index] = true;
-//}
-
-void JobShop::printJobResults() {
-	//std::cout << "call: printJobResults()" << std::endl;
-	std::sort(jobs.begin(), jobs.end(), [](const job &job1, const job &job2) {
-		return job1.getJobID() < job2.getJobID();
-	});
-	for (job &job : jobs) {
-		job.printJobDetails();
-	}
-}
-
-void JobShop::taskActivationManager() {
- orderJobsByTotalDuration();
-	for (unsigned long long i = 0; i < machineInUseUntil.size(); ++i) {
-//		std::cout << "Machine in use until: " << machineInUseUntil[i]<< std::endl;
-//		std::cout << "Current time: " << currentTime << std::endl;
-		if (machineInUseUntil[i] == currentTime) {
-//			std::cout << "Deactivate machine: " << i << std::endl;
-			machineInUseUntil[i] = 0;
-		}
-	}
-
-
-    for(job &job : jobs) {
-        for(task &task : job.getTaskList()) {
-            if (task.getCurrentState() == NOT_COMPLETED && machineInUseUntil[task.getMachineNumber()] == 0) {
-                // std::cout << "------------------------------------------------------------------------------------------" << std::endl;
-                //             std::cout << "jobID: " << job.getJobID() << std::endl;
-                //             std::cout << "job Duration: " << job.getTotalJobDuration() << std::endl;
-                //             std::cout << task << std::endl;
-                machineInUseUntil[task.getMachineNumber()] =
-                                    currentTime + task.getDuration();
-                task.activateTask(currentTime);
-                break;
-            } else if (task.getCurrentState() == IN_PROGRESS) {
-                break;
-            }
-        }
+//*** Functions ***//
+void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config) {
+    unsigned short id = 0;
+    for (const std::vector<unsigned short> &job : config) {
+        this->jobList.emplace_back(Job(id, job));
+        ++id;
     }
 }
 
-
-//Getters:
-unsigned short JobShop::getAmountOfTasks() const {
-	return this->nAmountOfTasks;
+void JobShop::checkJobProgress() {
+    for (Job &job : this->jobList) {
+        job.checkTaskProgress(this->currentTime);
+    }
 }
 
-unsigned short JobShop::getAmountOfMachines() const {
-	return this->nAmountOfMachines;
+//*** Scheduling ***//
+
+void JobShop::run() {
+    while (!this->allJobsDone()) {
+        this->checkJobProgress();  // Check and update task states
+        this->calculateSlackTime();
+        this->sortJobs();
+
+        for (Job &job : this->jobList) {
+            if (!job.getTasksAvailable() || !job.isPreviousTaskDone(job.getNextTask())) {
+                continue;  // Skip if no tasks available or previous task is not done
+            }
+
+            Task &currentTask = job.getNextTask();
+
+            if (currentTask.getEST() <= currentTime) {
+                if (this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime) {
+                    // Start the task
+                    currentTask.startTask(currentTime);
+                    this->machineInUseUntil[currentTask.getMachineNumber()] = currentTime + currentTask.getTaskDuration();
+                }
+            }
+        }
+        // Update the currentTime:
+        ++this->currentTime;
+    }
+    this->printResults();
 }
 
-const std::vector<job> JobShop::getJobs() const {
-	return this->jobs;
+//*** Calculations: ***//
+
+void JobShop::calculateSlackTime() {
+    for (Job &job : this->jobList) {
+        if (!job.getTasksAvailable())
+            continue;
+        Task &current = job.getNextTask();
+        unsigned short machineNr = current.getMachineNumber();
+
+        if (machineInUseUntil[machineNr] > currentTime) {
+            job.calculateEST(machineInUseUntil[machineNr]);
+        } else {
+            job.calculateEST(currentTime);
+        }
+        job.calculateJobDuration();
+    }
+
+    unsigned short longestJobDuration = this->getLongestJobDuration();
+    // This is split into two loops to ensure that all jobs have their jobDuration calculated before calculating slack time.
+    for (Job &job : this->jobList) {
+        job.calculateSlackTime(longestJobDuration);
+    }
+}
+
+//*** Sorting ***//
+
+void JobShop::sortJobs() {
+    std::sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2) {
+        if (job1.getSlackTime() == job2.getSlackTime()) {
+            // Sort by jobID if slack time is equal.
+            return job1.getJobID() < job2.getJobID();
+        }
+        return job1.getSlackTime() < job2.getSlackTime();
+    });
+}
+
+//*** Getters & Setters ***//
+
+bool JobShop::allJobsDone() {
+    for (Job &job : this->jobList) {
+        if (!job.getJobDone()) {
+            return false;  // When a job is not completed, return false.
+        }
+    }
+    return true;
+}
+
+timeType JobShop::getLongestJobDuration() {
+    auto maxDuration = [](const Job &LHS, const Job &RHS) {
+        return LHS.getJobDuration() < RHS.getJobDuration();
+    };
+    auto longestTask = std::max_element(jobList.begin(), jobList.end(), maxDuration);
+    return longestTask->getJobDuration();
+}
+
+//*** Stream operator (kinda) ***//
+
+void JobShop::printResults() {
+    std::sort(jobList.begin(), jobList.end(), [](const Job &job1, const Job &job2) {
+        return job1.getJobID() < job2.getJobID();
+    });
+    for (Job &job : jobList) {
+        job.printJobDetails();
+    }
 }

@@ -1,138 +1,106 @@
-#include "task.h"
-#include "JobShop.h"
+#include "Task.hpp"
 
-// Constructors + destructor
-task::task(unsigned short ID, unsigned short machineNumber, unsigned short duration) :
-		taskID(ID), machineNumber(machineNumber), duration(duration), currentState(
-				NOT_COMPLETED), earliestStartTime(0), startTime(0), endTime(0) {
+// *** Constructor and Destructor ***
+
+Task::Task() : taskId(0), machineNumber(0), duration(0), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
-//Copy constructor
-task::task(const task &RHS) :
-	taskID(RHS.taskID), machineNumber(RHS.machineNumber), duration(RHS.duration), 
-	currentState(RHS.currentState), earliestStartTime(RHS.earliestStartTime), 
-	startTime(RHS.startTime), endTime(RHS.endTime) {
-	//Niet tot zover
+Task::Task(timeType id, timeType machineNr, timeType dur)
+    : taskId(id), machineNumber(machineNr), duration(dur), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
-task::~task() {
-	// Destructor stub
+// Copy constructor
+Task::Task(const Task &RHS)
+    : taskId(RHS.taskId), machineNumber(RHS.machineNumber), duration(RHS.duration), EST(RHS.EST), startTime(RHS.startTime), endTime(RHS.endTime), state(RHS.state) {
 }
 
-// Operator=
-task& task::operator=(const task &RHS) {
-	if (this != &RHS){
-		this->taskID = RHS.taskID;
-		this->machineNumber = RHS.machineNumber;
-		this->duration = RHS.duration;
-		this->currentState = RHS.currentState;
-		this->earliestStartTime = RHS.earliestStartTime;
-		this->startTime = RHS.startTime;
-		this->endTime = RHS.endTime;
-	}
-	return *this;
+// Destructor
+Task::~Task() {
 }
 
-// Operator<
-bool task::operator<(const task &RHS) const {
-	return this->taskID == RHS.taskID;
+// *** Logic Operators ***
+
+// Less Than Operator:
+bool Task::operator<(const Task &RHS) const {
+    return this->taskId < RHS.taskId;
 }
 
-// Functions
-void task::activateTask(unsigned long long time) {
-	// std::cout << "activate task with id" << this->getTaskID() << std::endl;
-	this->setState(IN_PROGRESS);
-	this->setStartTime(time);
+// Assignment Operator:
+Task &Task::operator=(const Task &RHS) {
+    if (this != &RHS) {
+        taskId = RHS.taskId;
+        machineNumber = RHS.machineNumber;
+        duration = RHS.duration;
+        EST = RHS.EST;
+        startTime = RHS.startTime;
+        endTime = RHS.endTime;
+        state = RHS.state;
+    }
+    return *this;
 }
 
-void task::finishTask(unsigned long long time) {
-	// std::cout << "finish task with id" << this->getTaskID() << std::endl;
-	this->setState(COMPLETED);
-	this->setEndTime(time);
+// Equality Operator:
+bool Task::operator==(const Task &rhs) const {
+    return this->taskId == rhs.taskId;  // Consider more attributes if needed
 }
 
-// getTaskID:
-unsigned short task::getTaskID() const {
-	return this->taskID;
+// *** Getters and Setters ***
+
+timeType Task::getTaskId() const {
+    return this->taskId;
 }
 
-// getMachineNumber:
-unsigned short task::getMachineNumber() const {
-	return this->machineNumber;
+timeType Task::getTaskDuration() const {
+    return this->duration;
 }
 
-// getDuration:
-unsigned short task::getDuration() const {
-	return this->duration;
+timeType Task::getMachineNumber() const {
+    return this->machineNumber;
 }
 
-// setState:
-void task::setState(state state) {
-	this->currentState = state;
+timeType Task::getEST() const {
+    return this->EST;
 }
 
-// getCurrentState:
-state task::getCurrentState() const {
-	return this->currentState;
+timeType Task::getStartTime() const {
+    return this->startTime;
 }
 
-// setEarliestStartTime:
-void task::setEarliestStartTime(unsigned long long time) {
-	this->earliestStartTime = time;
-}
-unsigned long long task::getEarliestStartTime() const {
-	return this->earliestStartTime;
+timeType Task::getEndTime() const {
+    return this->endTime;
 }
 
-// setStartTime:
-void task::setStartTime(unsigned long long time) {
-	this->startTime = time;
+taskState Task::getTaskState() const {
+    return this->state;
 }
 
-//getStartTime:
-unsigned long long task::getStartTime() const {
-	return this->startTime;
+// *** Setters ***
+
+void Task::setEST(timeType newEST) {
+    this->EST = newEST;
 }
 
-// setEndTime:
-void task::setEndTime(unsigned long long time) {
-	this->endTime = time;
+void Task::setTaskDone() {
+    this->state = DONE;
 }
 
-// getEndTime:
-unsigned long long task::getEndTime() const {
-	return this->endTime;
+// *** Functions ***
+
+void Task::startTask(unsigned short startTime) {
+    this->startTime = startTime;
+    this->endTime = startTime + this->duration;
+    this->state = STARTED;
 }
 
-bool task::getTaskStarted() const{
-	if(this->currentState == IN_PROGRESS){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
+// *** Stream Operator ***
 
-// Stream Operator:
-std::ostream& operator<<(std::ostream &os, const task &RHS) {
-	os << "task: " << std::endl;
-	os << "| task ID: " << RHS.getTaskID();
-	os << " | machineNumber: " << RHS.getMachineNumber();
-	os << " | duration: " << RHS.getDuration();
-	os << " | currentState: ";
-	if (RHS.getCurrentState() == COMPLETED) {
-		os << " COMPLETED";
-	} else if (RHS.getCurrentState() == NOT_COMPLETED) {
-		os << " NOT_COMPLETED";
-	} else if (RHS.getCurrentState() == IN_PROGRESS) {
-		os << " IN_PROGRESS";
-	} else {
-		os << "fuck";
-	}
-	os << " | EST: " << RHS.getEarliestStartTime();
-	os << " | ST: " << RHS.getStartTime();
-	os << " | ET: " << RHS.getEndTime();
-	os << " |";
-	os << std::endl;
-	return os;
+std::ostream &operator<<(std::ostream &os, const Task &t) {
+    os << "Task Number: " << t.getTaskId();
+    os << " On Machine: " << t.getMachineNumber();
+    os << " Duration: " << t.getTaskDuration();
+    os << " EST: " << t.getEST();
+    os << " Start Time: " << t.getStartTime();
+    os << " End Time: " << t.getEndTime() << std::endl;
+    os << " Task State: " << t.getTaskState() << std::endl;
+    return os;
 }
