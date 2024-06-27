@@ -36,20 +36,16 @@ void JobShop::checkJobProgress() {
     for (Job &job : this->jobList) {
         for (Task &task : job.getTaskList()) {
             if (task.getTaskState() == STARTED && task.getEndTime() <= this->currentTime) {
+                std::cout << "Task " << task.getTaskId() << " on machine " << task.getMachineNumber() << " is done." << std::endl;
                 task.setTaskDone(); // Mark the task as done when end time is reached
             }
         }
     }
 }
 
-
-
 //*** Scheduling ***//
 
 //please work...
-// Assuming Task class has a method setDone() to mark the task as done
-// and a method isDone() to check if the task is done.
-
 void JobShop::run() {
     while (!this->allJobsDone()) {
         this->checkJobProgress(); // Check and update task states

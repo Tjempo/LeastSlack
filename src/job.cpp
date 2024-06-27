@@ -142,13 +142,13 @@ bool Job::getJobDone(){
 }
 
 
-bool Job::getJobStarted(){
-    for(const Task &task : this->taskList){
-        if(task.getTaskState() != STARTED){
-            return false;
+bool Job::getJobStarted() const {
+    for (const Task &task : this->taskList) {
+        if (task.getTaskState() == STARTED) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 Task& Job::getNextTask(){

@@ -37,7 +37,7 @@ public:
 
     bool getTasksAvailable();
     bool getJobDone();
-    bool getJobStarted();
+    bool getJobStarted() const;
     Task &getNextTask();
 
     bool isPreviousTaskDone(const Task &t);
