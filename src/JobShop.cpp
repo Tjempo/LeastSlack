@@ -37,19 +37,16 @@ void JobShop::checkJobProgress() {
         for (Task &task : job.getTaskList()) {
             if (task.getTaskState() == STARTED && task.getEndTime() <= this->currentTime) {
                 task.setTaskDone(); // Mark the task as done when end time is reached
+                std::cout << "Task: " << task.getTaskId() << " of Job: " << job.getJobID() << " is done at time " << this->currentTime << std::endl;
             }
         }
     }
 }
 
 
-
 //*** Scheduling ***//
 
 //please work...
-// Assuming Task class has a method setDone() to mark the task as done
-// and a method isDone() to check if the task is done.
-
 void JobShop::run() {
     while (!this->allJobsDone()) {
         this->checkJobProgress(); // Check and update task states
@@ -57,26 +54,43 @@ void JobShop::run() {
         this->sortJobsBySlack();
 
         for (Job &job : this->jobList) {
-            if (!job.getTasksAvailable() || !job.isPreviousTaskDone(job.getNextTask())) {
-                continue; // Skip if no tasks available or previous task is not done
+            if (!job.getJobStarted()) {
+                continue;
             }
 
             Task &currentTask = job.getNextTask();
+            if (!job.isPreviousTaskDone(currentTask)) {
+                std::cout << "Previous task for Job " << job.getJobID() << " Task " << currentTask.getTaskId() << " is not done." << std::endl;
+                continue; // Skip if previous task is not done
+            }
+
+            std::cout << "CurrentTime: " << this->currentTime << " Checking Task: " << currentTask.getTaskId() << " of Job: " << job.getJobID() << std::endl;
 
             if (currentTask.getEST() <= currentTime) {
                 if (this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime) {
                     // Start task
+                    std::cout << "Starting Task: " << currentTask.getTaskId() 
+                              << " of Job: " << job.getJobID() 
+                              << " on Machine: " << currentTask.getMachineNumber() << std::endl;
                     currentTask.startTask(currentTime);
                     this->machineInUseUntil[currentTask.getMachineNumber()] = currentTime + currentTask.getTaskDuration();
+                } else {
+                    std::cout << "Machine " << currentTask.getMachineNumber() 
+                              << " is in use until " << this->machineInUseUntil[currentTask.getMachineNumber()] << std::endl;
                 }
+            } else {
+                std::cout << "Task " << currentTask.getTaskId() 
+                          << " of Job " << job.getJobID() 
+                          << " EST " << currentTask.getEST() 
+                          << " is greater than current time " << this->currentTime << std::endl;
             }
         }
 
         ++this->currentTime; // Update the currentTime
 
         // Debugging output
-        for (Job &job : this->jobList) {
-            std::cout << "CurrentTime: " << this->currentTime << std::endl;
+        std::cout << "CurrentTime: " << this->currentTime << std::endl;
+        for (const Job &job : this->jobList) {
             std::cout << job << std::endl;
         }
     }
@@ -84,32 +98,54 @@ void JobShop::run() {
 
 
 
-
 //*** Calculations: ***//
 
 
-void JobShop::calculateSlackTime(){
-	for (Job &j : this->jobList) {
-		if (!j.getTasksAvailable())
-			continue;
-		Task &current = j.getNextTask();
+void JobShop::calculateSlackTime() {
+    for (Job &job : this->jobList) {
+        if (job.getJobStarted()) {
+            continue; // Skip if the job has already started
+        }
 
-		unsigned short machineNr = current.getMachineNumber();
-		// tasks that use an already busy machine cannot be executed until it is free
-        std::cout << "MachineNr: " << machineNr << " In use until " << machineInUseUntil[machineNr] << std::endl;
-		if (machineInUseUntil[machineNr] > currentTime){
-			j.calculateEST(machineInUseUntil[machineNr]);
-		} else {
-			j.calculateEST(currentTime);
-		}
-		j.calculateJobDuration();
-	}
-	// making seperate variable so it isn't calcuted for every job
-	unsigned short longestJobDuration = this->getLongestJobDuration();
-	for (Job &j : this->jobList) {
-		j.calculateSlackTime(longestJobDuration);
-	}
+        Task &nextTask = job.getNextTask();
+        unsigned short machineNr = nextTask.getMachineNumber();
+
+        // Calculate EST based on machine availability
+        if (machineInUseUntil[machineNr] > this->currentTime) {
+            job.calculateEST(machineInUseUntil[machineNr]);
+        } else {
+            job.calculateEST(currentTime);
+        }
+
+        // Calculate Job Duration and Slack Time
+        job.calculateJobDuration();
+        job.calculateSlackTime(this->currentTime);
+    }
 }
+
+
+// void JobShop::calculateSlackTime(){
+// 	for (Job &j : this->jobList) {
+// 		if (!j.getTasksAvailable())
+// 			continue;
+// 		Task &current = j.getNextTask();
+
+// 		unsigned short machineNr = current.getMachineNumber();
+// 		// tasks that use an already busy machine cannot be executed until it is free
+//         std::cout << "MachineNr: " << machineNr << " In use until " << machineInUseUntil[machineNr] << std::endl;
+// 		if (machineInUseUntil[machineNr] > currentTime){
+// 			j.calculateEST(machineInUseUntil[machineNr]);
+// 		} else {
+// 			j.calculateEST(currentTime);
+// 		}
+// 		j.calculateJobDuration();
+// 	}
+// 	// making seperate variable so it isn't calcuted for every job
+// 	unsigned short longestJobDuration = this->getLongestJobDuration();
+// 	for (Job &j : this->jobList) {
+// 		j.calculateSlackTime(longestJobDuration);
+// 	}
+// }
 
 
 
