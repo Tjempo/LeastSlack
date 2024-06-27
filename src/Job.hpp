@@ -37,13 +37,10 @@ public:
 
     bool getTasksAvailable();
     bool getJobDone();
-    bool getJobStarted() const;
-    
+    bool getJobStarted();
     Task &getNextTask();
-    Task &getPreviousTask(const Task &task);
 
-    bool isPreviousTaskDone(const Task &t) const;
-    void startNextTask(timeType currentTime);
+    bool isPreviousTaskDone(const Task &t);
 
     void printJobDetails() const;
 

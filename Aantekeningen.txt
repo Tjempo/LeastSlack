@@ -1,6 +1,6 @@
-- Misschien ipv over al een typedef een global.cpp waar timeUnit wordt genoteerd?  
+- Misschien ipv over al een typedef een global.cpp waar timeUnit wordt genoteerd? 
 
-- Task state enum ipv een bool ---DONE---
+- Task state enum ipv een bool
 
 
 - Path 

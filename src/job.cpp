@@ -24,33 +24,30 @@ void Job::sortTasksByID(){
 
 //*** Calculations *** //
 
-void Job::calculateEST(timeType &currentTime) {
-    // If no tasks are available, return early
-    if (!getTasksAvailable()) {
+void Job::calculateEST(timeType &currentTime){
+    if(!getTasksAvailable()){
+        return;
+    }
+    this->sortTasksByID();
+    auto& nextTask = this->getNextTask();
+
+    if(nextTask.getTaskState() == DONE || nextTask.getTaskState() == STARTED){
         return;
     }
 
-    // Sort tasks by ID to ensure correct order
-    this->sortTasksByID();
+    auto next = std::find(taskList.begin(), taskList.end(), nextTask);
+	if (next == taskList.end()){
+		return;
+    }
 
-    // Loop through tasks and calculate EST for each
-    for (Task &task : this->taskList) {
-        // If the task is done or started, continue to the next task
-        if (task.getTaskState() == DONE || task.getTaskState() == STARTED) {
-            continue;
-        }
-
-        // If it's the first task or a task with ID 0, set EST to currentTime
-        if (&task == &this->taskList.front() || task.getTaskId() == 0) {
-            task.setEST(currentTime);
-        } else {
-            // For other tasks, calculate EST based on the previous task's end time
-            Task &previousTask = getPreviousTask(task);
-            task.setEST(previousTask.getEndTime());
+    for (auto it = next; it != taskList.end(); it++){
+        if(it == next || it->getTaskId() == 0){
+            it->setEST(currentTime); 
+        }else{
+            it->setEST(calculateEST(*it));
         }
     }
 }
-
 
 timeType Job::calculateEST(const Task &t) {
 	auto getPreviousTask = [&t](const Task &ts) {
@@ -145,15 +142,14 @@ bool Job::getJobDone(){
 }
 
 
-bool Job::getJobStarted() const {
-    for (const Task &task : this->taskList) {
-        if (task.getTaskState() == STARTED) {
-            return true;
+bool Job::getJobStarted(){
+    for(const Task &task : this->taskList){
+        if(task.getTaskState() != STARTED){
+            return false;
         }
     }
-    return false;
+    return true;
 }
-
 
 Task& Job::getNextTask(){
     this->sortTasksByID(); //Might not be needed
@@ -173,34 +169,24 @@ Task& Job::getNextTask(){
     }
 }
 
-Task& Job::getPreviousTask(const Task &task) {
-    auto it = std::find(taskList.begin(), taskList.end(), task);
-    if (it != taskList.end() && it != taskList.begin()) {
-        return *(std::prev(it));
+bool Job::isPreviousTaskDone(const Task &t) {
+    // If the task is the first task, return true
+    if(t.getTaskId() == 0){
+        return true;
     }
-    return *it;
-}
 
-bool Job::isPreviousTaskDone(const Task &currentTask) const {
-    int taskId = currentTask.getTaskId();
-    if (taskId == 0) {
-        return true; // First task, no previous task
+    // Find the task with ID one less than the given task
+    auto previousTaskIter = std::find_if(taskList.begin(), taskList.end(), [&t](const Task &task) {
+        return task.getTaskId() == t.getTaskId() - 1;
+    });
+
+    // If the previous task is not found, return false
+    if (previousTaskIter == taskList.end()) {
+        return false;
     }
-    const Task &previousTask = this->taskList[taskId - 1];
-    return previousTask.getTaskState() == DONE;
-}
 
-void Job::startNextTask(timeType currentTime) {
-    if(!getTasksAvailable() && getJobDone()){
-        return;
-    } 
-
-    Task &nextTask = getNextTask();
-    if(nextTask.getTaskState() == STARTED){
-        return;
-    }else{
-        nextTask.startTask(currentTime);
-    }
+    // Return true if the previous task state is DONE, false otherwise
+    return previousTaskIter->getTaskState() == DONE;
 }
 
 
