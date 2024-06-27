@@ -25,10 +25,6 @@ void Config::readFirstLine(const std::string &fileName) {
 
 	// Read first line and extract values:
 	inputFile >> this->amountOfJobs >> this->amountOfMachines;
-
-	std::cout << "Amount of jobs: " << this->amountOfJobs << std::endl;
-	std::cout << "Amount of machines: " << this->amountOfMachines << std::endl;
-
 	// Close file:
 	inputFile.close();
 }
@@ -70,7 +66,6 @@ void Config::readTasks(const std::string &fileName) {
 
         // Break if the number of jobs read exceeds or equals the specified count
         if (ConfigData.size() >= this->amountOfJobs) {
-			printConfigData(); 
             break;
         }
     }
@@ -98,16 +93,4 @@ std::ostream& operator<<(std::ostream &os, const Config &conf) {
 	os << "Amount of jobs: " << conf.getAmountOfJobs() << std::endl;
 	os << "Amount of machines: " << conf.getAmountOfMachines() << std::endl;
 	return os;
-}
-
-//For debugging purposes:
-void Config::printConfigData(){
-	// Print the entire vector after the loop
-    std::cout << "Jobs Vector:" << std::endl;
-    for (const auto &job : ConfigData) {
-        for (unsigned short value : job) {
-            std::cout << value << " ";
-        }
-        std::cout << std::endl;
-    }
 }

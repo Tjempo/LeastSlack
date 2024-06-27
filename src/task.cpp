@@ -95,7 +95,6 @@ void Task::startTask(unsigned short startTime) {
     this->startTime = startTime;
     this->endTime = startTime + this->duration;
     this->state = STARTED;
-    std::cout << "Task " << this->taskId << " started at " << startTime << " and will end at " << this->endTime << std::endl;
 }
 
 // *** Stream Operator ***

@@ -3,7 +3,7 @@
 //*** Constructor and Destructor ***
 
 Job::Job(): jobID(0), jobDuration(0), slackTime(0){
-    std::cout << "Job created with no args." << std::endl;
+    // Job created with no args
 }
 
 Job::Job(unsigned short id, const std::vector<unsigned short> &config): jobID(id), jobDuration(0), slackTime(0){
@@ -24,7 +24,6 @@ void Job::sortTasksByID(){
 void Job::checkTaskProgress(timeType &currentTime){
     for(Task &task : this->taskList){
         if (task.getTaskState() == STARTED && task.getEndTime() <= currentTime) {
-            std::cout << "Task " << task.getTaskId() << " on machine " << task.getMachineNumber() << " is done." << std::endl;
             task.setTaskDone();
         }
     }
@@ -172,7 +171,8 @@ Task& Job::getNextTask(){
 		return *next;
 	}
     else {
-        std::cout << "No task found." << std::endl;
+        //This should never happen
+        std::cout << "No task found." << std::endl; 
         // return *taskList.end(); //This leads to undefined behavior
         return taskList.back();
     }

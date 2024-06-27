@@ -3,7 +3,6 @@
 //*** Constructors & Destructor ***//
 
 JobShop::JobShop(const Config &conf): amountOfMachines(conf.getAmountOfMachines()), amountOfJobs(conf.getAmountOfJobs()), currentTime(0){
-    std::cout << "JobShop created with " << this->amountOfMachines << " machines and " << this->amountOfJobs << " jobs." << std::endl;
     this->initialize(conf.getConfigVector());
     this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
 
@@ -11,11 +10,9 @@ JobShop::JobShop(const Config &conf): amountOfMachines(conf.getAmountOfMachines(
 }
 
 JobShop::JobShop(unsigned short machines, unsigned short jobs, const std::vector<Job> &jobsList): amountOfMachines(machines), amountOfJobs(jobs), currentTime(0){
-    std::cout << "JobShop created with " << amountOfMachines << " machines and " << amountOfJobs << " jobs." << std::endl;
-    //Print the jobs:
-    for(auto &job : jobsList){
-        std::cout << job << std::endl;
-    }
+    //cast to void to avoid warning, I should just remove it but im busy* (just lazy)
+    (void)jobsList;
+
     this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
 
 }
@@ -65,12 +62,6 @@ void JobShop::run() {
         }
 
         ++this->currentTime; // Update the currentTime
-
-        // Debugging output
-        for (Job &job : this->jobList) {
-            std::cout << "CurrentTime: " << this->currentTime << std::endl;
-            std::cout << job << std::endl;
-        }
     }
     this->printResults();
 }
@@ -89,7 +80,6 @@ void JobShop::calculateSlackTime(){
 
 		unsigned short machineNr = current.getMachineNumber();
 		// tasks that use an already busy machine cannot be executed until it is free
-        std::cout << "MachineNr: " << machineNr << " In use until " << machineInUseUntil[machineNr] << std::endl;
 		if (machineInUseUntil[machineNr] > currentTime){
 			j.calculateEST(machineInUseUntil[machineNr]);
 		} else {
@@ -104,35 +94,6 @@ void JobShop::calculateSlackTime(){
 	}
 }
 
-
-
-// void JobShop::calculateSlackTime(){
-//     for (Job &j : this->jobList) {
-//         Task &currentTask = j.getNextTask();
-//         if (!j.getTasksAvailable() || !j.isPreviousTaskDone(currentTask))
-//             continue; // Skip this job if no tasks are available or the previous task isn't done
-
-//         unsigned short machineNr = currentTask.getMachineNumber();
-
-//         // Check if the machine is in use and adjust the EST accordingly
-//         if (machineInUseUntil[machineNr] > currentTime){
-//             j.calculateEST(machineInUseUntil[machineNr]);
-//         } else {
-//             j.calculateEST(currentTime);
-//         }
-
-//         j.calculateJobDuration();
-//     }
-
-//     // Calculate slack time as before
-//     timeType longestJobDuration = this->getLongestJobDuration();
-//     for (Job &j : this->jobList) {
-//         j.calculateSlackTime(longestJobDuration);
-//     }
-// }
-
-
-
 //*** Sorting ***//
 
 void JobShop::sortJobsBySlack(){
@@ -144,7 +105,6 @@ void JobShop::sortJobsBySlack(){
         return job1.getSlackTime() < job2.getSlackTime();
     });
 }
-
 
 
 //*** Getters & Setters ***//
@@ -170,7 +130,6 @@ timeType JobShop::getLongestJobDuration() {
 //*** Stream operator ***//
 
 void JobShop::printResults(){
-    //std::cout << "call: printJobResults()" << std::endl;
 	std::sort(jobList.begin(), jobList.end(), [](const Job &job1, const Job &job2) {
 		return job1.getJobID() < job2.getJobID();
 	});
