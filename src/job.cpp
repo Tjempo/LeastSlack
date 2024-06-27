@@ -21,6 +21,15 @@ void Job::sortTasksByID(){
 	std::sort(this->taskList.begin(), this->taskList.end());
 }
 
+void Job::checkTaskProgress(timeType &currentTime){
+    for(Task &task : this->taskList){
+        if (task.getTaskState() == STARTED && task.getEndTime() <= currentTime) {
+            std::cout << "Task " << task.getTaskId() << " on machine " << task.getMachineNumber() << " is done." << std::endl;
+            task.setTaskDone();
+        }
+    }
+}
+
 
 //*** Calculations *** //
 
@@ -154,7 +163,7 @@ bool Job::getJobStarted() const {
 Task& Job::getNextTask(){
     this->sortTasksByID(); //Might not be needed
     auto taskDone = [](const Task &t) {
-		return !t.getTaskStarted();
+		return t.getTaskState() == NOT_STARTED;
 	};
 
 	auto next = std::find_if(taskList.begin(), taskList.end(), taskDone);

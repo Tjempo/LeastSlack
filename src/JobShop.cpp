@@ -34,12 +34,8 @@ void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config)
 
 void JobShop::checkJobProgress() {
     for (Job &job : this->jobList) {
-        for (Task &task : job.getTaskList()) {
-            if (task.getTaskState() == STARTED && task.getEndTime() <= this->currentTime) {
-                std::cout << "Task " << task.getTaskId() << " on machine " << task.getMachineNumber() << " is done." << std::endl;
-                task.setTaskDone(); // Mark the task as done when end time is reached
-            }
-        }
+        // It did not work doing it directly from here, so I will try this:
+        job.checkTaskProgress(this->currentTime);
     }
 }
 
@@ -76,6 +72,7 @@ void JobShop::run() {
             std::cout << job << std::endl;
         }
     }
+    this->printResults();
 }
 
 

@@ -15,6 +15,7 @@ public:
 
     // *** Functions ***:
     void sortTasksByID();
+    void checkTaskProgress(timeType &currentTime);
 
     //*** Calculations ***:
     void calculateEST(timeType &currentTime);

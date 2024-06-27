@@ -18,7 +18,7 @@ public:
 	//Logic Operators:
     bool operator<(const Task &rhs) const;
 	Task& operator=(const Task &rhs);
-    bool operator==(const Task &rhs);
+    bool operator==(const Task &rhs) const;
 
     // Getters:
     timeType getTaskId() const;
