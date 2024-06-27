@@ -24,6 +24,8 @@ public:
     timeType getTaskId() const;
 	timeType getMachineNumber() const;
 	timeType getTaskDuration() const;
+
+	/// @return Earliest Start Time as timeType (ULL)
 	timeType getEST() const;
 	timeType getStartTime() const;
 	timeType getEndTime() const;
@@ -41,7 +43,9 @@ private:
 	timeType taskId;
 	timeType machineNumber;
 	timeType duration;
-	timeType EST; //Earliest Start Time
+
+	/// @brief Earliest Start Time
+	timeType EST;
 	timeType startTime;
 	timeType endTime;
 	taskState state;

@@ -5,14 +5,10 @@
 JobShop::JobShop(const Config &conf): amountOfMachines(conf.getAmountOfMachines()), amountOfJobs(conf.getAmountOfJobs()), currentTime(0){
     this->initialize(conf.getConfigVector());
     this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
-
-
 }
 
 JobShop::JobShop(unsigned short machines, unsigned short jobs, const std::vector<Job> &jobsList): amountOfMachines(machines), amountOfJobs(jobs), currentTime(0){
-    //cast to void to avoid warning, I should just remove it but im busy* (just lazy)
-    (void)jobsList;
-
+    (void)jobsList; //cast to void to avoid warning. I should just remove it, but im busy* (just lazy)
     this->machineInUseUntil.resize(amountOfMachines, 0); // Resize the vector to the required size and initialize all elements to 0
 
 }
@@ -31,19 +27,17 @@ void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config)
 
 void JobShop::checkJobProgress() {
     for (Job &job : this->jobList) {
-        // It did not work doing it directly from here, so I will try this:
         job.checkTaskProgress(this->currentTime);
     }
 }
 
 //*** Scheduling ***//
 
-//please work...
 void JobShop::run() {
     while (!this->allJobsDone()) {
         this->checkJobProgress(); // Check and update task states
         this->calculateSlackTime();
-        this->sortJobsBySlack();
+        this->sortJobs();
 
         for (Job &job : this->jobList) {
             if (!job.getTasksAvailable() || !job.isPreviousTaskDone(job.getNextTask())) {
@@ -54,49 +48,46 @@ void JobShop::run() {
 
             if (currentTask.getEST() <= currentTime) {
                 if (this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime) {
-                    // Start task
+                    // Start the task
                     currentTask.startTask(currentTime);
                     this->machineInUseUntil[currentTask.getMachineNumber()] = currentTime + currentTask.getTaskDuration();
                 }
             }
         }
-
-        ++this->currentTime; // Update the currentTime
+		// Update the currentTime:
+        ++this->currentTime; 
     }
     this->printResults();
 }
 
 
-
-
 //*** Calculations: ***//
 
-
 void JobShop::calculateSlackTime(){
-	for (Job &j : this->jobList) {
-		if (!j.getTasksAvailable())
+	for (Job &job : this->jobList) {
+		if (!job.getTasksAvailable())
 			continue;
-		Task &current = j.getNextTask();
-
+		Task &current = job.getNextTask();
 		unsigned short machineNr = current.getMachineNumber();
-		// tasks that use an already busy machine cannot be executed until it is free
+
 		if (machineInUseUntil[machineNr] > currentTime){
-			j.calculateEST(machineInUseUntil[machineNr]);
+			job.calculateEST(machineInUseUntil[machineNr]);
 		} else {
-			j.calculateEST(currentTime);
+			job.calculateEST(currentTime);
 		}
-		j.calculateJobDuration();
+		job.calculateJobDuration();
 	}
-	// making seperate variable so it isn't calcuted for every job
+
 	unsigned short longestJobDuration = this->getLongestJobDuration();
-	for (Job &j : this->jobList) {
-		j.calculateSlackTime(longestJobDuration);
+	// This is split into two loops to ensure that all jobs have their jobDuration calculated before calculating slack time.
+	for (Job &job : this->jobList) {
+		job.calculateSlackTime(longestJobDuration);
 	}
 }
 
 //*** Sorting ***//
 
-void JobShop::sortJobsBySlack(){
+void JobShop::sortJobs(){
     std::sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2){
         if (job1.getSlackTime() == job2.getSlackTime()) {
             //Sort by jobID if slack time is equal.
@@ -127,7 +118,7 @@ timeType JobShop::getLongestJobDuration() {
 }
 
 
-//*** Stream operator ***//
+//*** Stream operator (kinda) ***//
 
 void JobShop::printResults(){
 	std::sort(jobList.begin(), jobList.end(), [](const Job &job1, const Job &job2) {

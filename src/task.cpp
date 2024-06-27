@@ -75,7 +75,7 @@ taskState Task::getTaskState() const {
     return this->state;
 }
 
-bool Task::getTaskStarted() const { //might not be needed
+bool Task::getTaskStarted() const {
     return this->state == STARTED;
 }
 

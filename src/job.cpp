@@ -72,7 +72,7 @@ timeType Job::calculateEST(const Task &t) {
 
 
 void Job::calculateJobDuration() {
-	this->sortTasksByID(); //Might not be needed
+	this->sortTasksByID();
 	Task lastTask = taskList.back();
 	this->jobDuration = lastTask.getTaskDuration() + lastTask.getEST();
 }
@@ -80,7 +80,6 @@ void Job::calculateJobDuration() {
 void Job::calculateSlackTime(timeType duration){
     this->slackTime = duration - this->jobDuration;
 }
-
 
 
 // *** Logic Operators ***:
@@ -169,11 +168,9 @@ Task& Job::getNextTask(){
 	// if there is a task found that task can be returned
 	if (next != taskList.end()) {
 		return *next;
-	}
-    else {
+	}else {
         //This should never happen
-        std::cout << "No task found." << std::endl; 
-        // return *taskList.end(); //This leads to undefined behavior
+        std::cerr << "No task found. The output will likely be wrong" << std::endl; 
         return taskList.back();
     }
 }
@@ -194,14 +191,13 @@ bool Job::isPreviousTaskDone(const Task &t) {
         return false;
     }
 
-    // Return true if the previous task state is DONE, false otherwise
     return previousTaskIter->getTaskState() == DONE;
 }
 
 
 
 //*** Stream operator ***//
-std::ostream& operator<<(std::ostream &os, const Job &job){ // Change the return type to std::ostream&
+std::ostream& operator<<(std::ostream &os, const Job &job){
     os << "Job ID: " << job.getJobID() << std::endl;
     os << "Job Duration: " << job.getJobDuration() << std::endl;
     os << "Slack Time: " << job.getSlackTime() << std::endl;
@@ -213,6 +209,8 @@ std::ostream& operator<<(std::ostream &os, const Job &job){ // Change the return
 }
 
 
+
+// *** Not used in the current implementation ***//
 void Job::printJobDetails() const {
 	std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() << std::endl;
 }

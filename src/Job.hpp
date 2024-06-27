@@ -19,7 +19,7 @@ public:
 
     //*** Calculations ***:
     void calculateEST(timeType &currentTime);
-    timeType calculateEST(const Task &t); //Overload, might combine together
+    timeType calculateEST(const Task &t); //Overloaded function
 
     void calculateJobDuration();
     void calculateSlackTime(timeType duration);
@@ -43,6 +43,7 @@ public:
 
     bool isPreviousTaskDone(const Task &t);
 
+    // *** Not used in the current implementation ***:
     void printJobDetails() const;
 
 private:
@@ -53,6 +54,10 @@ private:
 
 };
 
+
+// *** Stream Operator ***:
+
+// Does not need to be a friend function, as it only uses public get-functions.
 std::ostream& operator<<(std::ostream &os, const Job &job);
 
 
