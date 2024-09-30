@@ -2,7 +2,9 @@
 
 //*** Constructors & Destructor ***//
 
-Config::Config(/* args */) : amountOfJobs(0), amountOfMachines(0) {}
+Config::Config(const std::string &fileName) : amountOfJobs(0), amountOfMachines(0) {
+    this->readConfig(fileName);
+}
 
 Config::~Config() {
 }

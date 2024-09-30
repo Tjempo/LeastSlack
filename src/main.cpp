@@ -22,8 +22,7 @@ int main(int argc, char **argv) {
     // Try to run the program:
     try {
         // Read file & Create Jobs:
-        Config conf;
-        conf.readConfig(argv[1]);
+        Config conf(argv[1]);
 
         // Run the program:
         JobShop JS(conf);
@@ -31,9 +30,7 @@ int main(int argc, char **argv) {
 
         return 0;
     } catch (const std::exception &e) {
-        std::cerr << "Error: "
-                  << "Program failed with exception: " << std::endl
-                  << e.what() << std::endl;
+        std::cerr << "Error: " << "Program failed with exception: " << std::endl << e.what() << std::endl;
         return 1;
     }
 }

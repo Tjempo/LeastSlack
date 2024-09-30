@@ -9,23 +9,29 @@
 #include <vector>
 
 class Config {
-   private:
-    unsigned short amountOfJobs;
-    unsigned short amountOfMachines;
-
-    std::vector<std::vector<unsigned short>> ConfigData;  // Vector that stores vectors of unsigned shorts
    public:
-    Config(/* args */);
+    Config() = delete;
+    Config(const std::string& fileName);
     ~Config();
-
-    void readConfig(const std::string& fileName);
-    void readFirstLine(const std::string& fileName);
-    void readTasks(const std::string& fileName);
 
     unsigned short getAmountOfJobs() const;
     unsigned short getAmountOfMachines() const;
     const std::vector<std::vector<unsigned short>>& getConfigVector() const;
     void printConfigData();
+
+   private:
+    unsigned short amountOfJobs;
+    unsigned short amountOfMachines;
+
+    // Functions
+    void readConfig(const std::string& fileName);
+
+    /// @brief Extracts the first line of the file and stores the values in the amountOfJobs and amountOfMachines variables
+    /// @param fileName filename of the .txt file
+    void readFirstLine(const std::string& fileName);
+    void readTasks(const std::string& fileName);
+
+    std::vector<std::vector<unsigned short>> ConfigData;  // Vector that stores vectors of unsigned shorts
 };
 
 std::ostream& operator<<(std::ostream& os, const Config& conf);
