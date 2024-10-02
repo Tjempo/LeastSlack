@@ -11,7 +11,7 @@
 class Config {
    public:
     Config() = delete;
-    Config(const std::string& fileName);
+    explicit Config(const std::string& fileName);
     ~Config();
 
     unsigned short getAmountOfJobs() const;

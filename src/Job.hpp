@@ -14,20 +14,19 @@ class Job {
     ~Job();
 
     // *** Functions ***:
-    void sortTasksByID();
     void checkTaskProgress(const timeType &currentTime);
 
     //*** Calculations ***:
     void calculateEST(timeType &currentTime);
     timeType calculateEST(const Task &t);  // Overloaded function
-
     void calculateJobDuration();
     void calculateSlackTime(timeType duration);
 
     // *** Operators ***:
-    Job &operator=(const Job &rhs);
-    bool operator<(const Job &rhs) const;
-    bool operator>(const Job &rhs) const;
+    Job &operator=(const Job &RHS);
+    bool operator<(const Job &RHS) const;
+    bool operator>(const Job &RHS) const;
+
 
     // *** Getters and Setters ***:
     unsigned short getJobID() const;
@@ -36,8 +35,8 @@ class Job {
     const std::vector<Task> &getTaskList() const;
     std::vector<Task> &getTaskList();
 
-    bool getTasksAvailable();
-    bool getJobDone();
+    bool getTasksAvailable() const;
+    bool getJobDone() const;
     Task &getNextTask();
 
     bool isPreviousTaskDone(const Task &t);
@@ -50,6 +49,9 @@ class Job {
     timeType jobDuration;
     timeType slackTime;
     std::vector<Task> taskList;
+
+    // *** Functions ***:
+    void sortTasksByID();
 };
 
 // *** Stream Operator ***:

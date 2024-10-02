@@ -8,7 +8,7 @@ Job::Job() : jobID(0), jobDuration(0), slackTime(0) {
 
 Job::Job(unsigned short id, const std::vector<unsigned short> &config) : jobID(id), jobDuration(0), slackTime(0) {
     for (unsigned short i = 0; i < config.size(); i += 2) {
-        taskList.push_back(Task(i / 2, config[i], config[i + 1]));
+        taskList.push_back(Task(i / 2, config.at(i), config.at(i + 1)));
     }
 }
 
@@ -80,24 +80,24 @@ void Job::calculateSlackTime(timeType duration) {
 
 // *** Logic Operators ***:
 
-Job &Job::operator=(const Job &rhs) {
-    if (this != &rhs) {
-        this->jobID = rhs.jobID;
-        this->jobDuration = rhs.jobDuration;
-        this->slackTime = rhs.slackTime;
-        this->taskList = rhs.taskList;
+Job &Job::operator=(const Job &RHS) {
+    if (this != &RHS) {
+        this->jobID = RHS.jobID;
+        this->jobDuration = RHS.jobDuration;
+        this->slackTime = RHS.slackTime;
+        this->taskList = RHS.taskList;
     }
     return *this;
 }
 
-bool Job::operator<(const Job &rhs) const {
+bool Job::operator<(const Job &RHS) const {
     // Sort by slack time if not equal, else sort by jobID using the ternary operator:
-    return (this->slackTime != rhs.slackTime) ? this->slackTime < rhs.slackTime : this->jobID < rhs.jobID;
+    return (this->slackTime != RHS.slackTime) ? this->slackTime < RHS.slackTime : this->jobID < RHS.jobID;
 }
 
-bool Job::operator>(const Job &rhs) const {
+bool Job::operator>(const Job &RHS) const {
     // Sort by slack time if not equal, else sort by jobID using the ternary operator:
-    return (this->slackTime != rhs.slackTime) ? this->slackTime > rhs.slackTime : this->jobID > rhs.jobID;
+    return (this->slackTime != RHS.slackTime) ? this->slackTime > RHS.slackTime : this->jobID > RHS.jobID;
 }
 
 // *** Getters and Setters ***:
@@ -123,7 +123,7 @@ std::vector<Task> &Job::getTaskList() {
     return this->taskList;
 }
 
-bool Job::getTasksAvailable() {
+bool Job::getTasksAvailable() const{
     for (const Task &task : this->taskList) {
         if (task.getTaskState() == NOT_STARTED) {
             return true;
@@ -132,7 +132,7 @@ bool Job::getTasksAvailable() {
     return false;
 }
 
-bool Job::getJobDone() {
+bool Job::getJobDone() const{
     for (const Task &task : this->taskList) {
         if (task.getTaskState() != DONE) {
             return false;

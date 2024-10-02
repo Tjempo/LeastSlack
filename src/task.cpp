@@ -5,7 +5,7 @@
 Task::Task() : taskId(0), machineNumber(0), duration(0), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
-Task::Task(timeType id, timeType machineNr, timeType dur)
+Task::Task(timeType id, unsigned short machineNr, timeType dur)
     : taskId(id), machineNumber(machineNr), duration(dur), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
@@ -40,8 +40,8 @@ Task &Task::operator=(const Task &RHS) {
 }
 
 // Equality Operator:
-bool Task::operator==(const Task &rhs) const {
-    return this->taskId == rhs.taskId;  // Consider more attributes if needed
+bool Task::operator==(const Task &RHS) const {
+    return this->taskId == RHS.taskId;  // Consider more attributes if needed
 }
 
 // *** Getters and Setters ***
@@ -54,7 +54,7 @@ timeType Task::getTaskDuration() const {
     return this->duration;
 }
 
-timeType Task::getMachineNumber() const {
+unsigned short Task::getMachineNumber() const {
     return this->machineNumber;
 }
 
@@ -86,7 +86,7 @@ void Task::setTaskDone() {
 
 // *** Functions ***
 
-void Task::startTask(unsigned short startTime) {
+void Task::startTask(timeType startTime) {
     this->startTime = startTime;
     this->endTime = startTime + this->duration;
     this->state = STARTED;

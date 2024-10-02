@@ -7,11 +7,6 @@ JobShop::JobShop(const Config &conf) : amountOfMachines(conf.getAmountOfMachines
     this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
 }
 
-JobShop::JobShop(unsigned short machines, unsigned short jobs, const std::vector<Job> &jobsList) : amountOfMachines(machines), amountOfJobs(jobs), currentTime(0) {
-    (void)jobsList;                                       // cast to void to avoid warning. I should just remove it, but im busy* (just lazy)
-    this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
-}
-
 JobShop::~JobShop() {}  // Now I am become Destructor, the destroyer of Jobshop.
 
 //*** Functions ***//
@@ -45,10 +40,10 @@ void JobShop::run() {
             Task &currentTask = job.getNextTask();
 
             if (currentTask.getEST() <= currentTime) {
-                if (this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime) {
+                if (this->machineInUseUntil.at(currentTask.getMachineNumber()) <= currentTime) {
                     // Start the task
                     currentTask.startTask(currentTime);
-                    this->machineInUseUntil[currentTask.getMachineNumber()] = currentTime + currentTask.getTaskDuration();
+                    this->machineInUseUntil.at(currentTask.getMachineNumber()) = currentTime + currentTask.getTaskDuration();
                 }
             }
         }
@@ -64,18 +59,18 @@ void JobShop::calculateSlackTime() {
     for (Job &job : this->jobList) {
         if (!job.getTasksAvailable())
             continue;
-        Task &current = job.getNextTask();
+        const Task &current = job.getNextTask();
         unsigned short machineNr = current.getMachineNumber();
 
-        if (machineInUseUntil[machineNr] > currentTime) {
-            job.calculateEST(machineInUseUntil[machineNr]);
+        if (machineInUseUntil.at(machineNr) > currentTime) {
+            job.calculateEST(machineInUseUntil.at(machineNr));
         } else {
             job.calculateEST(currentTime);
         }
         job.calculateJobDuration();
     }
 
-    unsigned short longestJobDuration = this->getLongestJobDuration();
+    timeType longestJobDuration = this->getLongestJobDuration();
     // This is split into two loops to ensure that all jobs have their jobDuration calculated before calculating slack time.
     for (Job &job : this->jobList) {
         job.calculateSlackTime(longestJobDuration);
@@ -96,8 +91,8 @@ void JobShop::sortJobs() {
 
 //*** Getters & Setters ***//
 
-bool JobShop::allJobsDone() {
-    for (Job &job : this->jobList) {
+bool JobShop::allJobsDone() const {
+    for (Job const &job : this->jobList) {
         if (!job.getJobDone()) {
             return false;  // When a job is not completed, return false.
         }
@@ -119,7 +114,7 @@ void JobShop::printResults() {
     std::sort(jobList.begin(), jobList.end(), [](const Job &job1, const Job &job2) {
         return job1.getJobID() < job2.getJobID();
     });
-    for (Job &job : jobList) {
+    for (Job const &job : jobList) {
         job.printJobDetails();
     }
 }

@@ -13,18 +13,18 @@ enum taskState { NOT_STARTED,
 class Task {
    public:
     Task();
-    Task(timeType id, timeType machineNr, timeType duration);
-    Task(const Task &rhs);
+    Task(timeType id, unsigned short machineNr, timeType dur);
+    Task(const Task &RHS);
     ~Task();
 
     // Logic Operators:
-    bool operator<(const Task &rhs) const;
-    Task &operator=(const Task &rhs);
-    bool operator==(const Task &rhs) const;
+    bool operator<(const Task &RHS) const;
+    Task &operator=(const Task &RHS);
+    bool operator==(const Task &RHS) const;
 
     // Getters:
     timeType getTaskId() const;
-    timeType getMachineNumber() const;
+    unsigned short getMachineNumber() const;
     timeType getTaskDuration() const;
 
     /// @return Earliest Start Time as timeType (ULL)
@@ -38,11 +38,11 @@ class Task {
     void setTaskDone();
 
     // Other Functions:
-    void startTask(unsigned short startTime);
+    void startTask(timeType startTime);
 
    private:
     timeType taskId;
-    timeType machineNumber;
+    unsigned short machineNumber;
     timeType duration;
 
     /// @brief Earliest Start Time
