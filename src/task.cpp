@@ -5,7 +5,7 @@
 Task::Task() : taskId(0), machineNumber(0), duration(0), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
-Task::Task(timeType id, unsigned short machineNr, timeType dur)
+Task::Task(unsigned short id, unsigned short machineNr, timeType dur)
     : taskId(id), machineNumber(machineNr), duration(dur), EST(0), startTime(0), endTime(0), state(NOT_STARTED) {
 }
 
@@ -46,7 +46,7 @@ bool Task::operator==(const Task &RHS) const {
 
 // *** Getters and Setters ***
 
-timeType Task::getTaskId() const {
+unsigned short Task::getTaskId() const {
     return this->taskId;
 }
 

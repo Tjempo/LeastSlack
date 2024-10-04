@@ -13,7 +13,7 @@ enum taskState { NOT_STARTED,
 class Task {
    public:
     Task();
-    Task(timeType id, unsigned short machineNr, timeType dur);
+    Task(unsigned short id, unsigned short machineNr, timeType dur);
     Task(const Task &RHS);
     ~Task();
 
@@ -23,7 +23,7 @@ class Task {
     bool operator==(const Task &RHS) const;
 
     // Getters:
-    timeType getTaskId() const;
+    unsigned short getTaskId() const;
     unsigned short getMachineNumber() const;
     timeType getTaskDuration() const;
 
@@ -41,7 +41,7 @@ class Task {
     void startTask(timeType startTime);
 
    private:
-    timeType taskId;
+    unsigned short taskId;
     unsigned short machineNumber;
     timeType duration;
 
