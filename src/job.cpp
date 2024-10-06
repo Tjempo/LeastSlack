@@ -152,7 +152,7 @@ Task &Job::getNextTask() {
     if (next != taskList.end()) {
         return *next;
     } else {
-        // This should never happen
+        // This should never happen, but if it does, return the last task and notify the user.
         std::cerr << "No task found. The output will likely be wrong" << std::endl;
         return taskList.back();
     }

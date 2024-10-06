@@ -56,6 +56,9 @@
         "iomanip": "cpp",
         "span": "cpp",
         "variant": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "cstdarg": "cpp",
+        "hash_map": "cpp",
+        "list": "cpp"
     }
 }

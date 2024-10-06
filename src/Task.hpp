@@ -38,6 +38,9 @@ class Task {
     void setTaskDone();
 
     // Other Functions:
+
+    /// @brief marks the task as started and sets the start and end time
+    /// @param startTime the time at which the task is started
     void startTask(timeType startTime);
 
    private:

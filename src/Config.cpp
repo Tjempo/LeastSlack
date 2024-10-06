@@ -65,10 +65,19 @@ void Config::readTasks(const std::string &fileName) {
         if (ConfigData.size() >= this->amountOfJobs) {
             break;
         }
+
+        /*  // If the amount of jobs is not equal to the amount of jobs specified in the first line. Throw an error. 
+            // I did not use this because i dont think it is needed. It is extra exception handling.
+        
+        if (ConfigData.size() > this->amountOfJobs) {
+            throw std::runtime_error("Found too much jobs! Check if the amount of jobs is correct");
+            break; //Make sure to break the loop (not needed but just in case)
+        }
+        */
     }
 }
 
-//*** Getters & Setters ***//
+//*** Getters & Setters ***//W
 
 unsigned short Config::getAmountOfJobs() const {
     return this->amountOfJobs;

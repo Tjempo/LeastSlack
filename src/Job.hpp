@@ -14,12 +14,23 @@ class Job {
     ~Job();
 
     // *** Functions ***:
+
+    /// @brief checks the tasklist if there are tasks that are done. If they are mark them as done.
+    /// @param currentTime time of the simulation
     void checkTaskProgress(const timeType &currentTime);
 
     //*** Calculations ***:
+
+    /// @brief Calculates the Earliest Start Time for each task in the taskList
     void calculateEST(timeType &currentTime);
+
+    /// @brief Calculates the Earliest Start Time for a specific task
     timeType calculateEST(const Task &t);  // Overloaded function
+
+    /// @brief Calculates the duration of the job
     void calculateJobDuration();
+
+    /// @brief Calculates the slack time of the job
     void calculateSlackTime(timeType duration);
 
     // *** Operators ***:
@@ -39,6 +50,7 @@ class Job {
     bool getJobDone() const;
     Task &getNextTask();
 
+    
     bool isPreviousTaskDone(const Task &t);
 
     // *** Not used in the current implementation ***:

@@ -35,6 +35,8 @@ class JobShop {
     timeType currentTime;
 
     //*** Calculations ***//
+
+    /// @brief Calculates the slack time for each job
     void calculateSlackTime();
 
     //*** Sorting ***//

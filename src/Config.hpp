@@ -24,11 +24,17 @@ class Config {
     unsigned short amountOfMachines;
 
     // Functions
+
+    /// @brief Reads the config file and stores the values in the amountOfJobs and amountOfMachines variables
+    /// @param fileName filename of the .txt file
     void readConfig(const std::string& fileName);
 
     /// @brief Extracts the first line of the file and stores the values in the amountOfJobs and amountOfMachines variables
     /// @param fileName filename of the .txt file
     void readFirstLine(const std::string& fileName);
+
+    /// @brief Reads the tasks from the file and stores them in the ConfigData vector
+    /// @param fileName filename of the .txt file
     void readTasks(const std::string& fileName);
 
     std::vector<std::vector<unsigned short>> ConfigData;  // Vector that stores vectors of unsigned shorts
