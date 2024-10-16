@@ -4,7 +4,7 @@
   Welcome to "The Quest for the Leastest Slacks,". A C++ endeavor devoted to chasing the pinnacle of efficiency by implementing the least slack algorithm, seeking the most optimized solution.
 </p>
 
-![Image](https://cdn.discordapp.com/attachments/1209491965796941844/1213057995794030604/xMSZuDjB532943h0aNH4E4OaHEwaFQLdHw5LODtqmBys63b94yvH37jkFcVJSBk52dQUpMnEFeXgFsx81btxiePXsKjl8Ar5aFzGpWD7wAAAAASUVORK5CYII.png?ex=662b764b&is=6619014b&hm=78db4dfa8555bcdab050b5186358933b571e44b6ff0bc6f3acb4a04a4618f2c3&)
+![Image](https://github.com/Tjempo/LeastSlack/blob/readme-update/images/QuestforSlacks.png?raw=true)
 
 <h3>License</h3>
 Feel free to wield and modify the code as thou see fit, but remember, with great power cometh great responsibility.
