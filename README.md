@@ -6,6 +6,8 @@
 
 ![Image](https://github.com/Tjempo/LeastSlack/blob/readme-update/images/QuestforSlacks.png?raw=true)
 
+~Willy Shakes (1589)
+
 <h3>License</h3>
 Feel free to wield and modify the code as thou see fit, but remember, with great power cometh great responsibility.
 
