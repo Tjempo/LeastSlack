@@ -7,16 +7,18 @@ JobShop::JobShop(const Config &conf) : amountOfMachines(conf.getAmountOfMachines
     this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
 }
 
-JobShop::~JobShop() {}  // Now I am become Destructor, the destroyer of Jobshop.
+JobShop::~JobShop(){}  // Now I am become Destructor, the destroyer of Jobshop.
 
 //*** Functions ***//
 void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config) {
+    this->jobList.reserve(config.size());  // Avoid reallocations
     unsigned short id = 0;
-    for (const std::vector<unsigned short> &job : config) {
-        this->jobList.emplace_back(Job(id, job));
+    for (const auto &job : config) {
+        this->jobList.emplace_back(id, job);
         ++id;
     }
 }
+
 
 void JobShop::checkJobProgress() {
     for (Job &job : this->jobList) {

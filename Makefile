@@ -43,3 +43,6 @@ clean:
 ifeq ($(OS), Windows_NT)
 	del /Q $(subst /,\,$(OUTPUT_FOLDER))\*
 endif
+
+test: build
+	python3 ./__test__/evaluate.py
