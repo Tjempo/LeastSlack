@@ -46,3 +46,6 @@ endif
 
 test: build
 	python3 ./__test__/evaluate.py
+
+benchmark: build
+	python3 ./__test__/benchmark.py

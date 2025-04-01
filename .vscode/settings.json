@@ -59,6 +59,7 @@
         "codecvt": "cpp",
         "cstdarg": "cpp",
         "hash_map": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "text_encoding": "cpp"
     }
 }

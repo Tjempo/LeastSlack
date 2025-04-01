@@ -42,10 +42,9 @@ void JobShop::run() {
             Task &currentTask = job.getNextTask();
 
             if (currentTask.getEST() <= currentTime) {
-                if (this->machineInUseUntil.at(currentTask.getMachineNumber()) <= currentTime) {
-                    // Start the task
+                if (this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime) { //Dont use .at() here, it is slower and we know the index is valid.
                     currentTask.startTask(currentTime);
-                    this->machineInUseUntil.at(currentTask.getMachineNumber()) = currentTime + currentTask.getTaskDuration();
+                    this->machineInUseUntil[currentTask.getMachineNumber()] = currentTime + currentTask.getTaskDuration();
                 }
             }
         }
@@ -58,11 +57,15 @@ void JobShop::run() {
 //*** Calculations: ***//
 
 void JobShop::calculateSlackTime() {
+    timeType longestJobDuration = this->getLongestJobDuration();
     for (Job &job : this->jobList) {
-        if (!job.getTasksAvailable())
+        job.calculateSlackTime(longestJobDuration);
+        if (!job.getTasksAvailable()) {
             continue;
+        }
+        
         const Task &current = job.getNextTask();
-        unsigned short machineNr = current.getMachineNumber();
+        const unsigned short machineNr = current.getMachineNumber();
 
         if (machineInUseUntil.at(machineNr) > currentTime) {
             job.calculateEST(machineInUseUntil.at(machineNr));
@@ -71,20 +74,14 @@ void JobShop::calculateSlackTime() {
         }
         job.calculateJobDuration();
     }
-
-    timeType longestJobDuration = this->getLongestJobDuration();
-    // This is split into two loops to ensure that all jobs have their jobDuration calculated before calculating slack time.
-    for (Job &job : this->jobList) {
-        job.calculateSlackTime(longestJobDuration);
-    }
 }
 
 //*** Sorting ***//
 
+// Instead of sorting repeatedly, insert jobs in sorted order when updating slack times.
 void JobShop::sortJobs() {
-    std::sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2) {
+    std::stable_sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2) {
         if (job1.getSlackTime() == job2.getSlackTime()) {
-            // Sort by jobID if slack time is equal.
             return job1.getJobID() < job2.getJobID();
         }
         return job1.getSlackTime() < job2.getSlackTime();

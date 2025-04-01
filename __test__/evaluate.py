@@ -20,7 +20,6 @@ def compare_outputs(expected_path, actual_path):
         actual_lines = [normalize_line(line) for line in f.readlines()]
 
     if expected_lines == actual_lines:
-        print("✅ Match!")
         return True
 
     # If mismatch, print debugging info
