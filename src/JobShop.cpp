@@ -92,12 +92,8 @@ void JobShop::sortJobs() {
 //*** Getters & Setters ***//
 
 bool JobShop::allJobsDone() const {
-    for (Job const &job : this->jobList) {
-        if (!job.getJobDone()) {
-            return false;  // When a job is not completed, return false.
-        }
-    }
-    return true;
+    return std::all_of(this->jobList.begin(), this->jobList.end(),
+        [](const Job &job) { return job.getJobDone(); });
 }
 
 timeType JobShop::getLongestJobDuration() {
