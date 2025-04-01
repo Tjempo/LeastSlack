@@ -57,15 +57,11 @@ void JobShop::run() {
 //*** Calculations: ***//
 
 void JobShop::calculateSlackTime() {
-    timeType longestJobDuration = this->getLongestJobDuration();
     for (Job &job : this->jobList) {
-        job.calculateSlackTime(longestJobDuration);
-        if (!job.getTasksAvailable()) {
+        if (!job.getTasksAvailable())
             continue;
-        }
-        
         const Task &current = job.getNextTask();
-        const unsigned short machineNr = current.getMachineNumber();
+        unsigned short machineNr = current.getMachineNumber();
 
         if (machineInUseUntil.at(machineNr) > currentTime) {
             job.calculateEST(machineInUseUntil.at(machineNr));
@@ -73,6 +69,12 @@ void JobShop::calculateSlackTime() {
             job.calculateEST(currentTime);
         }
         job.calculateJobDuration();
+    }
+
+    timeType longestJobDuration = this->getLongestJobDuration();
+    // This is split into two loops to ensure that all jobs have their jobDuration calculated before calculating slack time.
+    for (Job &job : this->jobList) {
+        job.calculateSlackTime(longestJobDuration);
     }
 }
 
