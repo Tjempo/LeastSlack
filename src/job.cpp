@@ -153,7 +153,7 @@ Task &Job::getNextTask() {
         return *next;
     } else {
         // This should never happen, but if it does, return the last task and notify the user.
-        std::cerr << "No task found. The output will likely be wrong" << std::endl;
+        std::cerr << "No task found. The output will likely be wrong" <<  '\n';
         return taskList.back();
     }
 }
@@ -179,17 +179,17 @@ bool Job::isPreviousTaskDone(const Task &t) {
 
 //*** Stream operator ***//
 std::ostream &operator<<(std::ostream &os, const Job &job) {
-    os << "Job ID: " << job.getJobID() << std::endl;
-    os << "Job Duration: " << job.getJobDuration() << std::endl;
-    os << "Slack Time: " << job.getSlackTime() << std::endl;
-    os << "Tasks:" << std::endl;
+    os << "Job ID: " << job.getJobID() <<  '\n';
+    os << "Job Duration: " << job.getJobDuration() <<  '\n';
+    os << "Slack Time: " << job.getSlackTime() <<  '\n';
+    os << "Tasks:" <<  '\n';
     for (const Task &task : job.getTaskList()) {
-        os << task << std::endl;
+        os << task <<  '\n';
     }
     return os;
 }
 
 // *** Not used in the current implementation ***//
 void Job::printJobDetails() const {
-    std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() << std::endl;
+    std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() <<  '\n';
 }

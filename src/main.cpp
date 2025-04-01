@@ -7,15 +7,15 @@
 // Main function:
 int main(int argc, char **argv) {
     if (argc < 2) {
-        std::cerr << "Error: Missing file path argument." << std::endl;
+        std::cerr << "Error: Missing file path argument." <<  '\n';
         return 1;
     } else if (argc > 2) {
-        std::cerr << "Error: Too many arguments." << std::endl;
+        std::cerr << "Error: Too many arguments." <<  '\n';
         return 1;
     }
 
     if (std::filesystem::path(argv[1]).extension() != ".txt") {
-        std::cerr << "Error: File path must be a .txt file." << std::endl;
+        std::cerr << "Error: File path must be a .txt file." <<  '\n';
         return 1;
     }
 
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
         return 0;
     } catch (const std::exception &e) {
-        std::cerr << "Error: " << "Program failed with exception: " << std::endl << e.what() << std::endl;
+        std::cerr << "Error: " << "Program failed with exception: " <<  '\n' << e.what() <<  '\n';
         return 1;
     }
 }

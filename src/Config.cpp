@@ -93,7 +93,7 @@ const std::vector<std::vector<unsigned short>> &Config::getConfigVector() const 
 
 //*** Steam operator ***//
 std::ostream &operator<<(std::ostream &os, const Config &conf) {
-    os << "Amount of jobs: " << conf.getAmountOfJobs() << std::endl;
-    os << "Amount of machines: " << conf.getAmountOfMachines() << std::endl;
+    os << "Amount of jobs: " << conf.getAmountOfJobs() <<  '\n';
+    os << "Amount of machines: " << conf.getAmountOfMachines() <<  '\n';
     return os;
 }
