@@ -100,7 +100,7 @@ std::ostream &operator<<(std::ostream &os, const Task &t) {
     os << " Duration: " << t.getTaskDuration();
     os << " EST: " << t.getEST();
     os << " Start Time: " << t.getStartTime();
-    os << " End Time: " << t.getEndTime() << std::endl;
-    os << " Task State: " << t.getTaskState() << std::endl;
+    os << " End Time: " << t.getEndTime() <<  '\n';
+    os << " Task State: " << t.getTaskState() <<  '\n';
     return os;
 }
