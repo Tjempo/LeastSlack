@@ -60,6 +60,7 @@
         "cstdarg": "cpp",
         "hash_map": "cpp",
         "list": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "ranges": "cpp"
     }
 }

@@ -34,3 +34,92 @@ user    0m0,093s<br>
 sys     0m0,007s<br>
 
 > Removed .at() operator in known good sectors.
+## 09-05-2025 - 12:23
+
+real	0.140000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.120000s  
+sys	0.000000s  
+
+**Average real** = 0.133333s  
+**Average user** = 0.126667s  
+**Average sys** = 0.000000s  
+
+## 09-05-2025 - 12:23
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+**Average real** = 0.130000s  
+**Average user** = 0.130000s  
+**Average sys** = 0.000000s  
+
+## 09-05-2025 - 12:23
+
+real	0.140000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.120000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.120000s  
+sys	0.000000s  
+
+**Average real** = 0.133333s  
+**Average user** = 0.123333s  
+**Average sys** = 0.000000s  
+
+## 09-05-2025 - 12:27
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+**Average real** = 0.130000s  
+**Average user** = 0.130000s  
+**Average sys** = 0.000000s  
+
+## 09-05-2025 - 12:29
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.140000s  
+user	0.130000s  
+sys	0.000000s  
+
+real	0.130000s  
+user	0.130000s  
+sys	0.000000s  
+
+**Average real** = 0.133333s  
+**Average user** = 0.130000s  
+**Average sys** = 0.000000s  

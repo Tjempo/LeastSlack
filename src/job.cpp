@@ -189,7 +189,7 @@ std::ostream &operator<<(std::ostream &os, const Job &job) {
     return os;
 }
 
-// *** Not used in the current implementation ***//
+
 void Job::printJobDetails() const {
     std::cout << getJobID() << "\t" << taskList.front().getStartTime() << "\t" << taskList.back().getEndTime() <<  '\n';
 }

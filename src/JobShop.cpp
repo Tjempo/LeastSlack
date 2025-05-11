@@ -1,4 +1,5 @@
 #include "JobShop.hpp"
+#include <numeric>  // For std::iota
 
 //*** Constructors & Destructor ***//
 
@@ -80,15 +81,31 @@ void JobShop::calculateSlackTime() {
 
 //*** Sorting ***//
 
-// Instead of sorting repeatedly, insert jobs in sorted order when updating slack times.
 void JobShop::sortJobs() {
-    std::stable_sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2) {
-        if (job1.getSlackTime() == job2.getSlackTime()) {
-            return job1.getJobID() < job2.getJobID();
+    // Create a vector of indices to jobList
+    std::vector<size_t> indices(this->jobList.size());
+    std::iota(indices.begin(), indices.end(), 0);
+
+    std::sort(indices.begin(), indices.end(), [this](size_t i1, size_t i2) {
+        timeType _j1SlackTime = this->jobList[i1].getSlackTime();
+        timeType _j2SlackTime = this->jobList[i2].getSlackTime();
+
+        if (_j1SlackTime == _j2SlackTime) {
+            return this->jobList[i1].getJobID() < this->jobList[i2].getJobID();
         }
-        return job1.getSlackTime() < job2.getSlackTime();
+        return _j1SlackTime < _j2SlackTime;
     });
+
+    // Rebuild jobList based on sorted indices
+    std::vector<Job> sortedJobs;
+    sortedJobs.reserve(this->jobList.size());
+    for (size_t index : indices) {
+        sortedJobs.push_back(std::move(this->jobList[index]));
+    }
+    this->jobList = std::move(sortedJobs);
 }
+
+
 
 //*** Getters & Setters ***//
 
