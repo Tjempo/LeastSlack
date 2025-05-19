@@ -100,7 +100,7 @@ void JobShop::sortJobs() {
     std::vector<Job> sortedJobs;
     sortedJobs.reserve(this->jobList.size());
     for (size_t index : indices) {
-        sortedJobs.push_back(std::move(this->jobList[index]));
+        sortedJobs.emplace_back(std::move(this->jobList[index]));
     }
     this->jobList = std::move(sortedJobs);
 }

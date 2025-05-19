@@ -1,7 +1,6 @@
 # Compiler and libraries
 CXX = g++
-CXXFLAGS = -Wall -Wextra -Wconversion -pedantic -std=c++17
-CLIBS = 
+CXXFLAGS = -Wall -Wextra -Wconversion -pedantic -std=c++17 -O3 -flto
 SRC_FOLDER = src
 OUTPUT_FOLDER = $(SRC_FOLDER)/output
 OUTPUT_FILE = $(OUTPUT_FOLDER)/app
@@ -49,3 +48,12 @@ test: build
 
 benchmark: build
 	python3 ./__test__/benchmark.py
+
+
+cppcheck:
+	cppcheck --enable=all --inconclusive --std=c++17 --force --suppress=missingIncludeSystem $(SRC_FOLDER) 2> cppcheck_report.txt || true
+	@echo "cppcheck finished. Review 'cppcheck_report.txt' for details."
+
+# Make sure to build the program with -o0 for valgrind
+valgrind: build
+	valgrind --leak-check=full --track-origins=yes --track-fds=yes --show-leak-kinds=all ./$(OUTPUT_FILE) ./configs/$(CONFIG)

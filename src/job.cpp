@@ -8,7 +8,7 @@ Job::Job() : jobID(0), jobDuration(0), slackTime(0) {
 
 Job::Job(unsigned short id, const std::vector<unsigned short> &config) : jobID(id), jobDuration(0), slackTime(0) {
     for (unsigned short i = 0; i < config.size(); i += 2) {
-        taskList.push_back(Task(i / 2, config.at(i), config.at(i + 1)));
+        taskList.emplace_back(Task(i / 2, config.at(i), config.at(i + 1)));
     }
 }
 
@@ -17,7 +17,9 @@ Job::~Job() {
 
 // *** Functions ***:
 void Job::sortTasksByID() {
-    std::sort(this->taskList.begin(), this->taskList.end());
+    std::sort(this->taskList.begin(), this->taskList.end(), [](const Task &a, const Task &b) {
+        return a.getTaskId() < b.getTaskId();
+    });
 }
 
 void Job::checkTaskProgress(const timeType &currentTime) {
@@ -69,7 +71,6 @@ timeType Job::calculateEST(const Task &t) {
 }
 
 void Job::calculateJobDuration() {
-    this->sortTasksByID();
     Task lastTask = taskList.back();
     this->jobDuration = lastTask.getTaskDuration() + lastTask.getEST();
 }

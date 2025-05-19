@@ -14,9 +14,10 @@ class Config {
     explicit Config(const std::string& fileName);
     ~Config();
 
-    unsigned short getAmountOfJobs() const;
-    unsigned short getAmountOfMachines() const;
-    const std::vector<std::vector<unsigned short>>& getConfigVector() const;
+    
+    [[nodiscard]] inline unsigned short getAmountOfJobs() const noexcept { return amountOfJobs; }
+    [[nodiscard]] inline unsigned short getAmountOfMachines() const noexcept { return amountOfMachines; }
+    [[nodiscard]] inline const std::vector<std::vector<unsigned short>>& getConfigVector() const noexcept { return ConfigData; }
     void printConfigData();
 
    private:
@@ -30,12 +31,12 @@ class Config {
     void readConfig(const std::string& fileName);
 
     /// @brief Extracts the first line of the file and stores the values in the amountOfJobs and amountOfMachines variables
-    /// @param fileName filename of the .txt file
-    void readFirstLine(const std::string& fileName);
+    /// @param input ifstream object
+    void readFirstLine(std::ifstream& input);
 
     /// @brief Reads the tasks from the file and stores them in the ConfigData vector
-    /// @param fileName filename of the .txt file
-    void readTasks(const std::string& fileName);
+    /// @param input ifstream object
+    void readTasks(std::ifstream& input);
 
     std::vector<std::vector<unsigned short>> ConfigData;  // Vector that stores vectors of unsigned shorts
 };
