@@ -71,4 +71,4 @@ class Job {
 // Does not need to be a friend function, as it only uses public get-functions.
 std::ostream &operator<<(std::ostream &os, const Job &job);
 
-#endif /* JOB_HPP_ */
+#endif /* JOB_HPP_ **/

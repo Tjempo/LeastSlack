@@ -10,3 +10,4 @@ Debug/src/main.o
 *.exe
 LeastSlack
 /src/output
+cppcheck_report.txt

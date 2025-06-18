@@ -1,4 +1,5 @@
 #include "JobShop.hpp"
+#include <numeric>  // For std::iota
 
 //*** Constructors & Destructor ***//
 
@@ -7,16 +8,18 @@ JobShop::JobShop(const Config &conf) : amountOfMachines(conf.getAmountOfMachines
     this->machineInUseUntil.resize(amountOfMachines, 0);  // Resize the vector to the required size and initialize all elements to 0
 }
 
-JobShop::~JobShop() {}  // Now I am become Destructor, the destroyer of Jobshop.
+JobShop::~JobShop(){}  // Now I am become Destructor, the destroyer of Jobshop.
 
 //*** Functions ***//
 void JobShop::initialize(const std::vector<std::vector<unsigned short>> &config) {
+    this->jobList.reserve(config.size());  // Avoid reallocations
     unsigned short id = 0;
-    for (const std::vector<unsigned short> &job : config) {
-        this->jobList.emplace_back(Job(id, job));
+    for (const auto &job : config) {
+        this->jobList.emplace_back(id, job);
         ++id;
     }
 }
+
 
 void JobShop::checkJobProgress() {
     for (Job &job : this->jobList) {
@@ -40,10 +43,9 @@ void JobShop::run() {
             Task &currentTask = job.getNextTask();
 
             if (currentTask.getEST() <= currentTime) {
-                if (this->machineInUseUntil.at(currentTask.getMachineNumber()) <= currentTime) {
-                    // Start the task
+                if (this->machineInUseUntil[currentTask.getMachineNumber()] <= currentTime) { //Dont use .at() here, it is slower and we know the index is valid.
                     currentTask.startTask(currentTime);
-                    this->machineInUseUntil.at(currentTask.getMachineNumber()) = currentTime + currentTask.getTaskDuration();
+                    this->machineInUseUntil[currentTask.getMachineNumber()] = currentTime + currentTask.getTaskDuration();
                 }
             }
         }
@@ -80,24 +82,36 @@ void JobShop::calculateSlackTime() {
 //*** Sorting ***//
 
 void JobShop::sortJobs() {
-    std::sort(this->jobList.begin(), this->jobList.end(), [](const Job &job1, const Job &job2) {
-        if (job1.getSlackTime() == job2.getSlackTime()) {
-            // Sort by jobID if slack time is equal.
-            return job1.getJobID() < job2.getJobID();
+    // Create a vector of indices to jobList
+    std::vector<size_t> indices(this->jobList.size());
+    std::iota(indices.begin(), indices.end(), 0);
+
+    std::sort(indices.begin(), indices.end(), [this](size_t i1, size_t i2) {
+        timeType _j1SlackTime = this->jobList[i1].getSlackTime();
+        timeType _j2SlackTime = this->jobList[i2].getSlackTime();
+
+        if (_j1SlackTime == _j2SlackTime) {
+            return this->jobList[i1].getJobID() < this->jobList[i2].getJobID();
         }
-        return job1.getSlackTime() < job2.getSlackTime();
+        return _j1SlackTime < _j2SlackTime;
     });
+
+    // Rebuild jobList based on sorted indices
+    std::vector<Job> sortedJobs;
+    sortedJobs.reserve(this->jobList.size());
+    for (size_t index : indices) {
+        sortedJobs.emplace_back(std::move(this->jobList[index]));
+    }
+    this->jobList = std::move(sortedJobs);
 }
+
+
 
 //*** Getters & Setters ***//
 
 bool JobShop::allJobsDone() const {
-    for (Job const &job : this->jobList) {
-        if (!job.getJobDone()) {
-            return false;  // When a job is not completed, return false.
-        }
-    }
-    return true;
+    return std::all_of(this->jobList.begin(), this->jobList.end(),
+        [](const Job &job) { return job.getJobDone(); });
 }
 
 timeType JobShop::getLongestJobDuration() {
